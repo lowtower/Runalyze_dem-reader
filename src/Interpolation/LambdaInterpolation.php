@@ -17,8 +17,8 @@ class LambdaInterpolation implements InterpolationInterface
 {
     use ArgumentsCheckTrait;
 
-    /** @var \Closure|false */
-    protected $Lambda = false;
+    /** @var \\Closure */
+    protected $Lambda;
 
     /**
      * LambdaInterpolation constructor.

@@ -73,14 +73,14 @@ abstract class AbstractFileProvider implements ProviderInterface
     }
 
     /**
-     * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
+     * @param  array<array> $latitudeLongitudes array(array($lat, $lng), ...)
      * @return bool
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function hasDataFor(array $latitudeLongitudes): bool
     {
         foreach ($latitudeLongitudes as $location) {
-            if (!is_array($location) || count($location) !== 2) {
+            if (count($location) !== 2) {
                 throw new InvalidArgumentException('Locations must be arrays of two values.');
             }
 

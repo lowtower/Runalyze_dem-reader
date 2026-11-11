@@ -103,7 +103,7 @@ class GeoTIFFReader extends AbstractResourceReader
         }
 
         fseek($this->FileResource, 0);
-        $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, 4) ?: '');
+        $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, max(1, 4)) ?: '');
 
         if (false === $data || !isset($data['TIFF_ID'])) {
             throw new RuntimeException('Provided GeoTIFF file is not a valid tiff file.');
@@ -132,7 +132,7 @@ class GeoTIFFReader extends AbstractResourceReader
         fseek($this->FileResource, 4);
 
         $ifdOffsetFormat = $this->isLittleEndian() ? 'VIFDoffset' : 'NIFDoffset';
-        $data = unpack($ifdOffsetFormat, fread($this->FileResource, 4) ?: '');
+        $data = unpack($ifdOffsetFormat, fread($this->FileResource, max(1, 4)) ?: '');
 
         if (false === $data || !isset($data['IFDoffset'])) {
             throw new RuntimeException('Could not read IFD offset from GeoTIFF file.');
@@ -151,7 +151,7 @@ class GeoTIFFReader extends AbstractResourceReader
         }
 
         $countFormat = $this->isLittleEndian() ? 'vcount' : 'ncount';
-        $countData = unpack($countFormat, fread($this->FileResource, 2) ?: '');
+        $countData = unpack($countFormat, fread($this->FileResource, max(1, 2)) ?: '');
 
         if (false === $countData || !isset($countData['count'])) {
             throw new RuntimeException('Could not read IFD entry count from GeoTIFF file.');
@@ -160,7 +160,7 @@ class GeoTIFFReader extends AbstractResourceReader
         $ifdFormat = $this->isLittleEndian() ? 'vtag/vtype/Vcount/Voffset' : 'ntag/ntype/Ncount/Noffset';
 
         for ($i = 0; $i < $countData['count']; ++$i) {
-            $constData = unpack($ifdFormat, fread($this->FileResource, static::TIFF_CONST_IFD_ENTRY_BYTES) ?: '');
+            $constData = unpack($ifdFormat, fread($this->FileResource, max(1, static::TIFF_CONST_IFD_ENTRY_BYTES)) ?: '');
 
             if (false === $constData || !isset($constData['tag'])) {
                 continue;
@@ -223,7 +223,7 @@ class GeoTIFFReader extends AbstractResourceReader
 
         fseek($this->FileResource, $this->StripOffsets + (int) ceil($row / $this->RowsPerStrip) * static::LEN_OFFSET);
 
-        $firstColumnData = unpack('Voffset', fread($this->FileResource, static::LEN_OFFSET) ?: '');
+        $firstColumnData = unpack('Voffset', fread($this->FileResource, max(1, static::LEN_OFFSET)) ?: '');
 
         if (false === $firstColumnData || !isset($firstColumnData['offset'])) {
             return false;
@@ -231,7 +231,7 @@ class GeoTIFFReader extends AbstractResourceReader
 
         fseek($this->FileResource, (int) $firstColumnData['offset'] + ($this->NumDataCols * ($row % $this->RowsPerStrip) + $col) * $this->BytesPerSample);
 
-        $elevationData = unpack('velevation', fread($this->FileResource, $this->BytesPerSample) ?: '');
+        $elevationData = unpack('velevation', fread($this->FileResource, max(1, $this->BytesPerSample)) ?: '');
 
         if (false === $elevationData || !isset($elevationData['elevation'])) {
             return false;

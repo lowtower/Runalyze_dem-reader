@@ -36,7 +36,7 @@ jobs:
         run: vendor/bin/phpunit --colors=never --coverage-clover=coverage.clover --coverage-xml=coverage.xml
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse src --level=5 --no-progress
+        run: vendor/bin/phpstan analyse src --level=8 --no-progress
 
       - name: Check PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix -v --diff --dry-run
@@ -62,7 +62,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Run PHPStan (max level)
-        run: vendor/bin/phpstan analyse src --level=8 --no-progress
+        run: vendor/bin/phpstan analyse src --level=9 --no-progress
 
   code-quality:
     name: Code Quality
