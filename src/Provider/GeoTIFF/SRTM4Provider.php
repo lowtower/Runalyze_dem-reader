@@ -40,7 +40,7 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
     protected string $FilenameFormat = 'srtm_%02d_%02d.tif';
 
     /** @var ResourceReaderInterface */
-    protected $ResourceReader;
+    protected ResourceReaderInterface $ResourceReader;
 
     public function initResourceReader(): void
     {

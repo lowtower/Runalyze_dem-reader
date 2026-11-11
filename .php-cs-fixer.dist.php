@@ -24,7 +24,6 @@ return (new PhpCsFixer\Config())
         'array_syntax' => ['syntax' => 'short'],
         'list_syntax' => ['syntax' => 'short'],
         'no_unused_imports' => true,
-        'fully_qualified_strict_types' => true,
         'phpdoc_add_missing_param_annotation' => false,
     ])
     ->setFinder(
