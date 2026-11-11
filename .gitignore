@@ -1,2 +1,7 @@
 vendor/
 tests/testfiles/*
+
+# Coverage files
+coverage.clover
+coverage.xml
+.phpunit.cache/

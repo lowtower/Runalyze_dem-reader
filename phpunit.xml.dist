@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="vendor/autoload.php" colors="true">
+<phpunit bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="DEM-Reader Tests">
             <directory suffix="Test.php">./src/Tests/</directory>
@@ -14,4 +14,7 @@
             <directory>./src</directory>
         </whitelist>
     </filter>
+    <php>
+        <ini name="xdebug.mode" value="coverage"/>
+    </php>
 </phpunit>
