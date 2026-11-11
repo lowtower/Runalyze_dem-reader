@@ -14,7 +14,7 @@ namespace Runalyze\DEM\Provider;
 trait GuessInvalidValuesTrait
 {
     /**
-     * @param array $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param array<int|bool> $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      */
     protected function guessInvalidValuesOnBox(array &$elevationOnBoundingBox): void
     {

@@ -16,8 +16,8 @@ use Runalyze\DEM\Provider\AbstractFileProvider;
 abstract class AbstractGeoTIFFProvider extends AbstractFileProvider
 {
     /**
-     * @param  string            $filename
-     * @throws \RuntimeException
+     * @param  string $filename
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
     protected function openResource(string $filename): void
     {

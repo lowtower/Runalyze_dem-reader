@@ -14,9 +14,9 @@ namespace Runalyze\DEM\Provider;
 interface ResourceReaderInterface
 {
     /**
-     * @param \Resource $resource
+     * @param resource|false $resource
      */
-    public function setResource(\Resource $resource): void;
+    public function setResource($resource): void;
 
     public function readHeader(): void;
 

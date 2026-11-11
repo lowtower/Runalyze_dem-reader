@@ -17,28 +17,28 @@ class LambdaInterpolation implements InterpolationInterface
 {
     use ArgumentsCheckTrait;
 
-    /** @var \Closure */
-    protected \Closure $Lambda;
+    /** @var \Closure|false */
+    protected $Lambda = false;
 
     /**
      * LambdaInterpolation constructor.
-     * @param  \Closure                 $interpolationFunction
-     * @throws InvalidArgumentException
+     * @param  \Closure $interpolationFunction
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    public function __construct(\Closure $interpolationFunction)
+    public function __construct($interpolationFunction)
     {
         if (!$this->isValidClosure($interpolationFunction)) {
-            throw new InvalidArgumentException('Provided closure does not fulfill the requirements.');
+            throw new \Runalyze\DEM\Exception\InvalidArgumentException('Provided closure does not fulfill the requirements.');
         }
 
         $this->Lambda = $interpolationFunction;
     }
 
     /**
-     * @param  \Closure $function
+     * @param  mixed $function
      * @return bool
      */
-    protected function isValidClosure(\Closure $function): bool
+    protected function isValidClosure($function): bool
     {
         $Reflection = new \ReflectionFunction($function);
 
@@ -58,9 +58,9 @@ class LambdaInterpolation implements InterpolationInterface
      *
      * @param  float                    $x                      x position of Z within bounding box, required: $x in [0.0, 1.0]
      * @param  float                    $y                      y position of Z within bounding box, required: $y in [0.0, 1.0]
-     * @param  array                    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @return int                      estimated elevation on point Z
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function interpolate(float $x, float $y, array $elevationOnBoundingBox): int
     {

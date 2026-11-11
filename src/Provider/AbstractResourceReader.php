@@ -15,13 +15,13 @@ use Runalyze\DEM\Exception\RuntimeException;
 
 abstract class AbstractResourceReader implements ResourceReaderInterface
 {
-    /** @var \Resource|false */
-    protected \Resource|false $FileResource = false;
+    /** @var resource|false */
+    protected $FileResource = false;
 
     /**
-     * @param \Resource|false $resource
+     * @param resource|false $resource
      */
-    public function __construct(\Resource|false $resource = false)
+    public function __construct($resource = false)
     {
         if (false !== $resource) {
             $this->setResource($resource);
@@ -34,23 +34,23 @@ abstract class AbstractResourceReader implements ResourceReaderInterface
     }
 
     /**
-     * @param  \Resource         $resource
-     * @throws RuntimeException
+     * @param resource|false $resource
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
-    public function setResource(\Resource $resource): void
+    public function setResource($resource): void
     {
         $this->closeResource();
 
         $this->FileResource = $resource;
 
-        if (false === $this->FileResource) {
+        if (!is_resource($this->FileResource)) {
             throw new RuntimeException('Provided resource is invalid.');
         }
     }
 
     protected function closeResource(): void
     {
-        if ($this->FileResource instanceof \Resource) {
+        if (is_resource($this->FileResource)) {
             fclose($this->FileResource);
         }
     }

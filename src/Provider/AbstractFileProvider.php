@@ -27,11 +27,11 @@ abstract class AbstractFileProvider implements ProviderInterface
     /** @var string */
     protected string $PathToFiles;
 
-    /** @var \Resource|false */
-    protected \Resource|false $FileResource = false;
+    /** @var resource|false */
+    protected $FileResource = false;
 
     /** @var string|false */
-    protected string|false $CurrentFilename = false;
+    protected $CurrentFilename = false;
 
     /** @var InterpolationInterface|null */
     protected ?InterpolationInterface $Interpolation = null;
@@ -73,9 +73,9 @@ abstract class AbstractFileProvider implements ProviderInterface
     }
 
     /**
-     * @param  array                    $latitudeLongitudes array(array($lat, $lng), ...)
+     * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
      * @return bool
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function hasDataFor(array $latitudeLongitudes): bool
     {
@@ -118,10 +118,10 @@ abstract class AbstractFileProvider implements ProviderInterface
     }
 
     /**
-     * @param  float[]                   $latitudes
-     * @param  float[]                   $longitudes
-     * @return array                     elevations [m] can be false if nothing retrieved
-     * @throws InvalidArgumentException
+     * @param  array<float> $latitudes
+     * @param  array<float> $longitudes
+     * @return array<int|bool> elevations [m] can be false if nothing retrieved
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function getElevations(array $latitudes, array $longitudes): array
     {
@@ -148,7 +148,7 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float                     $latitude
      * @param  float                     $longitude
      * @return int|bool                  elevation [m] can be false if nothing retrieved
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function getElevation($latitude, $longitude): int|bool
     {
@@ -210,6 +210,10 @@ abstract class AbstractFileProvider implements ProviderInterface
 
         $this->guessInvalidValuesOnBox($elevationOnBoundingBox);
 
+        if (null === $this->Interpolation) {
+            throw new \Runalyze\DEM\Exception\RuntimeException('Interpolation is not set.');
+        }
+
         return $this->Interpolation->interpolate(
             ($exactColValue - $col),
             ($exactRowValue - $row),
@@ -241,7 +245,7 @@ abstract class AbstractFileProvider implements ProviderInterface
     /**
      * @param  float $latitude
      * @param  float $longitude
-     * @return array array(row, col)
+     * @return array{0:float,1:float} array(row, col)
      */
     abstract protected function getExactRowAndColFor(float $latitude, float $longitude): array;
 }

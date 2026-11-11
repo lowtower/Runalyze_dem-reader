@@ -25,7 +25,7 @@ class SRTM1ArcSecondProvider extends SRTM4Provider
      * @param  float                    $latitude
      * @param  float                    $longitude
      * @return string
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     protected function getFilenameFor(float $latitude, float $longitude): string
     {
@@ -56,7 +56,7 @@ class SRTM1ArcSecondProvider extends SRTM4Provider
     /**
      * @param  float   $latitude
      * @param  float   $longitude
-     * @return float[] array(row, col)
+     * @return array{0:float,1:float} array(row, col)
      */
     protected function getExactRowAndColFor(float $latitude, float $longitude): array
     {

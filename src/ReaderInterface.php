@@ -16,16 +16,16 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 interface ReaderInterface
 {
     /**
-     * @param  array $latitudeLongitudes array(array($lat, $lng), ...)
+     * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
      * @return bool
      */
     public function hasDataFor(array $latitudeLongitudes): bool;
 
     /**
-     * @param  float[]                  $latitudes
-     * @param  float[]                  $longitudes
-     * @return array                    elevations [m] can be false if nothing retrieved
-     * @throws InvalidArgumentException
+     * @param  array<float>             $latitudes
+     * @param  array<float>             $longitudes
+     * @return array<int|bool>          elevations [m] can be false if nothing retrieved
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function getElevations(array $latitudes, array $longitudes): array;
 }

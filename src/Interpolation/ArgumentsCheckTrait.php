@@ -18,8 +18,8 @@ trait ArgumentsCheckTrait
     /**
      * @param  float                    $x
      * @param  float                    $y
-     * @param  array                    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
-     * @throws InvalidArgumentException
+     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     protected function checkArguments(float $x, float $y, array $elevationOnBoundingBox): void
     {

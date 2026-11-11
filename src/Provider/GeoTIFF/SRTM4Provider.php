@@ -39,8 +39,8 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
     /** @var string */
     protected string $FilenameFormat = 'srtm_%02d_%02d.tif';
 
-    /** @var GeoTIFFReader */
-    protected GeoTIFFReader $ResourceReader;
+    /** @var ResourceReaderInterface */
+    protected $ResourceReader;
 
     public function initResourceReader(): void
     {
@@ -59,7 +59,7 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
      * @param  float                    $latitude
      * @param  float                    $longitude
      * @return string
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     protected function getFilenameFor(float $latitude, float $longitude): string
     {
@@ -97,7 +97,7 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
     /**
      * @param  float   $latitude
      * @param  float   $longitude
-     * @return float[] array(row, col)
+     * @return array{0:float,1:float} array(row, col)
      */
     protected function getExactRowAndColFor(float $latitude, float $longitude): array
     {

@@ -21,7 +21,6 @@ return (new PhpCsFixer\Config())
         'strict_param' => true,
         'phpdoc_separation' => false,
         'type_declaration_spaces' => true,
-        'single_type_element_per_declaration' => true,
         'array_syntax' => ['syntax' => 'short'],
         'list_syntax' => ['syntax' => 'short'],
         'no_unused_imports' => true,

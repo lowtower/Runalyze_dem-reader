@@ -57,8 +57,9 @@ class Reader implements ReaderInterface
     }
 
     /**
-     * @param  array $latitudeLongitudes array(array($lat, $lng), ...)
+     * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
      * @return bool
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
     public function hasDataFor(array $latitudeLongitudes): bool
     {
@@ -72,10 +73,10 @@ class Reader implements ReaderInterface
     }
 
     /**
-     * @param  array            $latitudes
-     * @param  array            $longitudes
-     * @return array            elevations [m] can be false if nothing retrieved
-     * @throws RuntimeException
+     * @param  array<float>     $latitudes
+     * @param  array<float>     $longitudes
+     * @return array<int|bool>  elevations [m] can be false if nothing retrieved
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
     public function getElevations(array $latitudes, array $longitudes): array
     {
@@ -91,9 +92,9 @@ class Reader implements ReaderInterface
     }
 
     /**
-     * @param  float[] $latitudes
-     * @param  float[] $longitudes
-     * @return array   array(array($lat, $lng), ...)
+     * @param  array<float> $latitudes
+     * @param  array<float> $longitudes
+     * @return array<array{0:float,1:float}>   array(array($lat, $lng), ...)
      */
     protected function getBoundsFor(array $latitudes, array $longitudes): array
     {

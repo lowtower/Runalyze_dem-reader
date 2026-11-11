@@ -94,12 +94,20 @@ class GeoTIFFReader extends AbstractResourceReader
 
     /**
      * Go to the file header and work out the byte order (bytes 0-1) and TIFF identifier (bytes 2-3).
-     * @throws RuntimeException
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
     protected function checkByteOrderAndTiffIdentifier(): void
     {
+        if (!is_resource($this->FileResource)) {
+            throw new RuntimeException('File resource is not valid.');
+        }
+
         fseek($this->FileResource, 0);
-        $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, 4));
+        $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, 4) ?: '');
+
+        if (false === $data || !isset($data['TIFF_ID'])) {
+            throw new RuntimeException('Provided GeoTIFF file is not a valid tiff file.');
+        }
 
         if (static::MAGIC_TIFF_ID !== $data['TIFF_ID']) {
             throw new RuntimeException('Provided GeoTIFF file is not a valid tiff file.');
@@ -117,12 +125,20 @@ class GeoTIFFReader extends AbstractResourceReader
      */
     protected function goToIFDEntries(): void
     {
+        if (!is_resource($this->FileResource)) {
+            throw new RuntimeException('File resource is not valid.');
+        }
+
         fseek($this->FileResource, 4);
 
         $ifdOffsetFormat = $this->isLittleEndian() ? 'VIFDoffset' : 'NIFDoffset';
-        $data = unpack($ifdOffsetFormat, fread($this->FileResource, 4));
+        $data = unpack($ifdOffsetFormat, fread($this->FileResource, 4) ?: '');
 
-        fseek($this->FileResource, $data['IFDoffset']);
+        if (false === $data || !isset($data['IFDoffset'])) {
+            throw new RuntimeException('Could not read IFD offset from GeoTIFF file.');
+        }
+
+        fseek($this->FileResource, (int) $data['IFDoffset']);
     }
 
     /**
@@ -130,12 +146,25 @@ class GeoTIFFReader extends AbstractResourceReader
      */
     protected function readIFDEntries(): void
     {
+        if (!is_resource($this->FileResource)) {
+            throw new RuntimeException('File resource is not valid.');
+        }
+
         $countFormat = $this->isLittleEndian() ? 'vcount' : 'ncount';
-        $countData = unpack($countFormat, fread($this->FileResource, 2));
+        $countData = unpack($countFormat, fread($this->FileResource, 2) ?: '');
+
+        if (false === $countData || !isset($countData['count'])) {
+            throw new RuntimeException('Could not read IFD entry count from GeoTIFF file.');
+        }
+
         $ifdFormat = $this->isLittleEndian() ? 'vtag/vtype/Vcount/Voffset' : 'ntag/ntype/Ncount/Noffset';
 
         for ($i = 0; $i < $countData['count']; ++$i) {
-            $constData = unpack($ifdFormat, fread($this->FileResource, static::TIFF_CONST_IFD_ENTRY_BYTES));
+            $constData = unpack($ifdFormat, fread($this->FileResource, static::TIFF_CONST_IFD_ENTRY_BYTES) ?: '');
+
+            if (false === $constData || !isset($constData['tag'])) {
+                continue;
+            }
 
             switch ($constData['tag']) {
                 case static::TIFF_CONST_IMAGE_WIDTH:
@@ -171,7 +200,7 @@ class GeoTIFFReader extends AbstractResourceReader
     /**
      * @param  float   $relativeLatitude
      * @param  float   $relativeLongitude
-     * @return float[] array(row, col)
+     * @return array{0:float,1:float} array(row, col)
      */
     public function getExactRowAndColFor(float $relativeLatitude, float $relativeLongitude): array
     {
@@ -188,13 +217,27 @@ class GeoTIFFReader extends AbstractResourceReader
      */
     public function getElevationFor(int $row, int $col): int|bool
     {
-        fseek($this->FileResource, $this->StripOffsets + ceil($row / $this->RowsPerStrip) * static::LEN_OFFSET);
+        if (!is_resource($this->FileResource)) {
+            return false;
+        }
 
-        $firstColumnData = unpack('Voffset', fread($this->FileResource, static::LEN_OFFSET));
+        fseek($this->FileResource, $this->StripOffsets + (int) ceil($row / $this->RowsPerStrip) * static::LEN_OFFSET);
 
-        fseek($this->FileResource, $firstColumnData['offset'] + ($this->NumDataCols * ($row % $this->RowsPerStrip) + $col) * $this->BytesPerSample);
+        $firstColumnData = unpack('Voffset', fread($this->FileResource, static::LEN_OFFSET) ?: '');
 
-        $elevation = unpack('velevation', fread($this->FileResource, $this->BytesPerSample))['elevation'];
+        if (false === $firstColumnData || !isset($firstColumnData['offset'])) {
+            return false;
+        }
+
+        fseek($this->FileResource, (int) $firstColumnData['offset'] + ($this->NumDataCols * ($row % $this->RowsPerStrip) + $col) * $this->BytesPerSample);
+
+        $elevationData = unpack('velevation', fread($this->FileResource, $this->BytesPerSample) ?: '');
+
+        if (false === $elevationData || !isset($elevationData['elevation'])) {
+            return false;
+        }
+
+        $elevation = $elevationData['elevation'];
 
         return ($elevation <= self::UNKNOWN || $elevation >= -self::UNKNOWN) ? false : $elevation;
     }
