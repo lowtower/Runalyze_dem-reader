@@ -16,13 +16,13 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 class SRTM4Provider extends AbstractGeoTIFFProvider
 {
     /** @var int */
-    protected const int MAX_LATITUDE = 60;
+    protected const MAX_LATITUDE = 60;
 
     /** @var int */
-    protected const int MAX_LONGITUDE = 180;
+    protected const MAX_LONGITUDE = 180;
 
     /** @var float */
-    protected const float DEGREES_PER_TILE = 5.0;
+    protected const DEGREES_PER_TILE = 5.0;
 
     /** @var float */
     protected float $CurrentTileHorizontalReference;

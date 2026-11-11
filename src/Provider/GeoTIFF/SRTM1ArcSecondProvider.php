@@ -16,7 +16,7 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 class SRTM1ArcSecondProvider extends SRTM4Provider
 {
     /** @var float */
-    protected const float DEGREES_PER_TILE = 1.0;
+    protected const DEGREES_PER_TILE = 1.0;
 
     /** @var string */
     protected string $FilenameFormat = '%s%02d_%s%03d.tif';

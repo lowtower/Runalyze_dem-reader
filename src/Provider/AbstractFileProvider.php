@@ -19,10 +19,10 @@ abstract class AbstractFileProvider implements ProviderInterface
     use GuessInvalidValuesTrait;
 
     /** @var int */
-    protected const int MAX_LATITUDE = 90;
+    protected const MAX_LATITUDE = 90;
 
     /** @var int */
-    protected const int MAX_LONGITUDE = 180;
+    protected const MAX_LONGITUDE = 180;
 
     /** @var string */
     protected string $PathToFiles;
