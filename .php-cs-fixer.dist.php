@@ -20,9 +20,17 @@ return (new PhpCsFixer\Config())
         'strict_comparison' => true,
         'strict_param' => true,
         'phpdoc_separation' => false,
+        'type_declaration_spaces' => true,
+        'single_type_element_per_declaration' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'list_syntax' => ['syntax' => 'short'],
+        'no_unused_imports' => true,
+        'fully_qualified_strict_types' => true,
+        'phpdoc_add_missing_param_annotation' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->in(__DIR__.DIRECTORY_SEPARATOR.'src')
+            ->exclude('Tests')
     )
 ;
