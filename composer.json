@@ -9,7 +9,7 @@
     "phpunit/phpunit": " ^10.0 ",
     "friendsofphp/php-cs-fixer": "^3.95",
     "phpstan/phpstan": "^2.0",
-    "rector/rector": "^1.2",
+    "rector/rector": "^2.0",
     "nette/utils": "^4.1",
     "phpunit/php-code-coverage": " ^10.0 ",
     "phpunit/php-invoker": "^3.1 || ^4.0"
