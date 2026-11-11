@@ -32,7 +32,7 @@ class BilinearInterpolation implements InterpolationInterface
      * @return int                      estimated elevation on point Z
      * @throws InvalidArgumentException
      */
-    public function interpolate($x, $y, array $elevationOnBoundingBox)
+    public function interpolate(float $x, float $y, array $elevationOnBoundingBox): int
     {
         $this->checkArguments($x, $y, $elevationOnBoundingBox);
 

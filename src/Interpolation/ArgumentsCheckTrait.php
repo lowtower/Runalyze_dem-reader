@@ -21,7 +21,7 @@ trait ArgumentsCheckTrait
      * @param  array                    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @throws InvalidArgumentException
      */
-    protected function checkArguments($x, $y, array $elevationOnBoundingBox)
+    protected function checkArguments(float $x, float $y, array $elevationOnBoundingBox): void
     {
         if (4 !== count($elevationOnBoundingBox)) {
             throw new InvalidArgumentException('Array with elevation on bounding box must have four values.');

@@ -29,5 +29,5 @@ interface InterpolationInterface
      * @param  array $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @return int   estimated elevation on point Z
      */
-    public function interpolate($x, $y, array $elevationOnBoundingBox);
+    public function interpolate(float $x, float $y, array $elevationOnBoundingBox): int;
 }

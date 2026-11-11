@@ -16,10 +16,10 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 class SRTM1ArcSecondProvider extends SRTM4Provider
 {
     /** @var float */
-    const DEGREES_PER_TILE = 1.0;
+    protected const float DEGREES_PER_TILE = 1.0;
 
     /** @var string */
-    protected $FilenameFormat = '%s%02d_%s%03d.tif';
+    protected string $FilenameFormat = '%s%02d_%s%03d.tif';
 
     /**
      * @param  float                    $latitude
@@ -27,7 +27,7 @@ class SRTM1ArcSecondProvider extends SRTM4Provider
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function getFilenameFor($latitude, $longitude)
+    protected function getFilenameFor(float $latitude, float $longitude): string
     {
         $this->loadTileReferencesFor($latitude, $longitude);
 
@@ -44,10 +44,10 @@ class SRTM1ArcSecondProvider extends SRTM4Provider
      * @param float $latitude
      * @param float $longitude
      */
-    protected function loadTileReferencesFor($latitude, $longitude)
+    protected function loadTileReferencesFor(float $latitude, float $longitude): void
     {
-        $this->CurrentTileVerticalReference = floor($latitude / static::DEGREES_PER_TILE);
-        $this->CurrentTileHorizontalReference = floor($longitude / static::DEGREES_PER_TILE);
+        $this->CurrentTileVerticalReference = (float) floor($latitude / static::DEGREES_PER_TILE);
+        $this->CurrentTileHorizontalReference = (float) floor($longitude / static::DEGREES_PER_TILE);
 
         $this->CurrentTileLatitude = $this->CurrentTileVerticalReference;
         $this->CurrentTileLongitude = $this->CurrentTileHorizontalReference;
@@ -58,7 +58,7 @@ class SRTM1ArcSecondProvider extends SRTM4Provider
      * @param  float   $longitude
      * @return float[] array(row, col)
      */
-    protected function getExactRowAndColFor($latitude, $longitude)
+    protected function getExactRowAndColFor(float $latitude, float $longitude): array
     {
         return $this->ResourceReader->getExactRowAndColFor(
             abs($this->CurrentTileLatitude + 1 - $latitude) / static::DEGREES_PER_TILE,

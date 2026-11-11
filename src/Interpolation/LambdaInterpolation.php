@@ -18,7 +18,7 @@ class LambdaInterpolation implements InterpolationInterface
     use ArgumentsCheckTrait;
 
     /** @var \Closure */
-    protected $Lambda;
+    protected \Closure $Lambda;
 
     /**
      * LambdaInterpolation constructor.
@@ -38,7 +38,7 @@ class LambdaInterpolation implements InterpolationInterface
      * @param  \Closure $function
      * @return bool
      */
-    protected function isValidClosure(\Closure $function)
+    protected function isValidClosure(\Closure $function): bool
     {
         $Reflection = new \ReflectionFunction($function);
 
@@ -62,7 +62,7 @@ class LambdaInterpolation implements InterpolationInterface
      * @return int                      estimated elevation on point Z
      * @throws InvalidArgumentException
      */
-    public function interpolate($x, $y, array $elevationOnBoundingBox)
+    public function interpolate(float $x, float $y, array $elevationOnBoundingBox): int
     {
         $this->checkArguments($x, $y, $elevationOnBoundingBox);
 

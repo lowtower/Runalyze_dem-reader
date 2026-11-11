@@ -19,12 +19,12 @@ interface ProviderInterface extends ReaderInterface
     /**
      * @param InterpolationInterface $interpolation
      */
-    public function setInterpolation(InterpolationInterface $interpolation);
+    public function setInterpolation(InterpolationInterface $interpolation): void;
 
     /**
      * @param  float    $latitude
      * @param  float    $longitude
      * @return int|bool elevation [m] can be false if nothing retrieved
      */
-    public function getElevation($latitude, $longitude);
+    public function getElevation($latitude, $longitude): int|bool;
 }

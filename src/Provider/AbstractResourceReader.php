@@ -15,13 +15,13 @@ use Runalyze\DEM\Exception\RuntimeException;
 
 abstract class AbstractResourceReader implements ResourceReaderInterface
 {
-    /** @var resource|bool */
-    protected $FileResource = false;
+    /** @var \Resource|false */
+    protected \Resource|false $FileResource = false;
 
     /**
-     * @param resource|bool $resource
+     * @param \Resource|false $resource
      */
-    public function __construct($resource = false)
+    public function __construct(\Resource|false $resource = false)
     {
         if (false !== $resource) {
             $this->setResource($resource);
@@ -34,10 +34,10 @@ abstract class AbstractResourceReader implements ResourceReaderInterface
     }
 
     /**
-     * @param  resource         $resource
+     * @param  \Resource         $resource
      * @throws RuntimeException
      */
-    public function setResource($resource)
+    public function setResource(\Resource $resource): void
     {
         $this->closeResource();
 
@@ -48,19 +48,19 @@ abstract class AbstractResourceReader implements ResourceReaderInterface
         }
     }
 
-    protected function closeResource()
+    protected function closeResource(): void
     {
-        if (is_resource($this->FileResource)) {
+        if ($this->FileResource instanceof \Resource) {
             fclose($this->FileResource);
         }
     }
 
-    abstract public function readHeader();
+    abstract public function readHeader(): void;
 
     /**
      * @param  int      $row
      * @param  int      $col
      * @return int|bool elevation [m] can be false if nothing retrieved or value is unknown
      */
-    abstract public function getElevationFor($row, $col);
+    abstract public function getElevationFor(int $row, int $col): int|bool;
 }

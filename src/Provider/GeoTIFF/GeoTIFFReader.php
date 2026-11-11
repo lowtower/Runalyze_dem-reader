@@ -65,27 +65,27 @@ class GeoTIFFReader extends AbstractResourceReader
     const UNKNOWN = -32768;
 
     /** @var int The number of bytes containing each item of elevation data */
-    protected $BytesPerSample = 2;
+    protected int $BytesPerSample = 2;
 
     /** @var int 	The number of components per pixel */
-    protected $SamplesPerPixel = 1;
+    protected int $SamplesPerPixel = 1;
 
     /** @var int The number of rows per strip */
-    protected $RowsPerStrip = 1;
+    protected int $RowsPerStrip = 1;
 
     /** @var int */
-    protected $NumDataRows;
+    protected int $NumDataRows = 0;
 
     /** @var int */
-    protected $NumDataCols;
+    protected int $NumDataCols = 0;
 
     /** @var int */
-    protected $StripOffsets;
+    protected int $StripOffsets = 0;
 
     /** @var string */
-    protected $ByteOrder;
+    protected string $ByteOrder = '';
 
-    public function readHeader()
+    public function readHeader(): void
     {
         $this->checkByteOrderAndTiffIdentifier();
         $this->goToIFDEntries();
@@ -96,7 +96,7 @@ class GeoTIFFReader extends AbstractResourceReader
      * Go to the file header and work out the byte order (bytes 0-1) and TIFF identifier (bytes 2-3).
      * @throws RuntimeException
      */
-    protected function checkByteOrderAndTiffIdentifier()
+    protected function checkByteOrderAndTiffIdentifier(): void
     {
         fseek($this->FileResource, 0);
         $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, 4));
@@ -115,7 +115,7 @@ class GeoTIFFReader extends AbstractResourceReader
     /**
      * The remaining 4 bytes in the header are the offset to the IFD.
      */
-    protected function goToIFDEntries()
+    protected function goToIFDEntries(): void
     {
         fseek($this->FileResource, 4);
 
@@ -128,7 +128,7 @@ class GeoTIFFReader extends AbstractResourceReader
     /**
      * Read IFD entries which (the number of entries in each is in the first two bytes).
      */
-    protected function readIFDEntries()
+    protected function readIFDEntries(): void
     {
         $countFormat = $this->isLittleEndian() ? 'vcount' : 'ncount';
         $countData = unpack($countFormat, fread($this->FileResource, 2));
@@ -163,7 +163,7 @@ class GeoTIFFReader extends AbstractResourceReader
     /**
      * @return bool
      */
-    protected function isLittleEndian()
+    protected function isLittleEndian(): bool
     {
         return static::LITTLE_ENDIAN === $this->ByteOrder;
     }
@@ -173,7 +173,7 @@ class GeoTIFFReader extends AbstractResourceReader
      * @param  float   $relativeLongitude
      * @return float[] array(row, col)
      */
-    public function getExactRowAndColFor($relativeLatitude, $relativeLongitude)
+    public function getExactRowAndColFor(float $relativeLatitude, float $relativeLongitude): array
     {
         return [
             $relativeLatitude * ($this->NumDataRows - 1),
@@ -186,7 +186,7 @@ class GeoTIFFReader extends AbstractResourceReader
      * @param  int      $col
      * @return int|bool
      */
-    public function getElevationFor($row, $col)
+    public function getElevationFor(int $row, int $col): int|bool
     {
         fseek($this->FileResource, $this->StripOffsets + ceil($row / $this->RowsPerStrip) * static::LEN_OFFSET);
 

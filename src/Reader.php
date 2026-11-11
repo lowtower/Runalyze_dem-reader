@@ -17,15 +17,15 @@ use Runalyze\DEM\Provider\ProviderInterface;
 class Reader implements ReaderInterface
 {
     /** @var ProviderInterface[] */
-    protected $Provider = [];
+    protected array $Provider = [];
 
     /** @var bool */
-    protected $InvalidFlag = false;
+    protected bool $InvalidFlag = false;
 
     /**
      * @param ProviderInterface|null $provider
      */
-    public function __construct(ProviderInterface $provider = null)
+    public function __construct(?ProviderInterface $provider = null)
     {
         if (null !== $provider) {
             $this->addProvider($provider);
@@ -35,7 +35,7 @@ class Reader implements ReaderInterface
     /**
      * @param ProviderInterface $provider
      */
-    public function addProvider(ProviderInterface $provider)
+    public function addProvider(ProviderInterface $provider): void
     {
         $this->Provider[] = $provider;
     }
@@ -43,7 +43,7 @@ class Reader implements ReaderInterface
     /**
      * @return int
      */
-    public function numberOfProviders()
+    public function numberOfProviders(): int
     {
         return count($this->Provider);
     }
@@ -51,7 +51,7 @@ class Reader implements ReaderInterface
     /**
      * @return bool
      */
-    public function hasProviders()
+    public function hasProviders(): bool
     {
         return !empty($this->Provider);
     }
@@ -60,7 +60,7 @@ class Reader implements ReaderInterface
      * @param  array $latitudeLongitudes array(array($lat, $lng), ...)
      * @return bool
      */
-    public function hasDataFor(array $latitudeLongitudes)
+    public function hasDataFor(array $latitudeLongitudes): bool
     {
         foreach ($this->Provider as $provider) {
             if ($provider->hasDataFor($latitudeLongitudes)) {
@@ -77,7 +77,7 @@ class Reader implements ReaderInterface
      * @return array            elevations [m] can be false if nothing retrieved
      * @throws RuntimeException
      */
-    public function getElevations(array $latitudes, array $longitudes)
+    public function getElevations(array $latitudes, array $longitudes): array
     {
         $boundaries = $this->getBoundsFor($latitudes, $longitudes);
 
@@ -95,7 +95,7 @@ class Reader implements ReaderInterface
      * @param  float[] $longitudes
      * @return array   array(array($lat, $lng), ...)
      */
-    protected function getBoundsFor(array $latitudes, array $longitudes)
+    protected function getBoundsFor(array $latitudes, array $longitudes): array
     {
         $filteredLatitudes = array_filter($latitudes);
         $filteredLongitudes = array_filter($longitudes);

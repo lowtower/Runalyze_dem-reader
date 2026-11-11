@@ -19,31 +19,31 @@ abstract class AbstractFileProvider implements ProviderInterface
     use GuessInvalidValuesTrait;
 
     /** @var int */
-    const MAX_LATITUDE = 90;
+    protected const int MAX_LATITUDE = 90;
 
     /** @var int */
-    const MAX_LONGITUDE = 180;
+    protected const int MAX_LONGITUDE = 180;
 
     /** @var string */
-    protected $PathToFiles;
+    protected string $PathToFiles;
 
-    /** @var resource */
-    protected $FileResource;
+    /** @var \Resource|false */
+    protected \Resource|false $FileResource = false;
 
-    /** @var string|bool */
-    protected $CurrentFilename = false;
+    /** @var string|false */
+    protected string|false $CurrentFilename = false;
 
     /** @var InterpolationInterface|null */
-    protected $Interpolation;
+    protected ?InterpolationInterface $Interpolation = null;
 
     /** @var ResourceReaderInterface */
-    protected $ResourceReader;
+    protected ResourceReaderInterface $ResourceReader;
 
     /**
-     * @param string                      $pathToFiles
-     * @param InterpolationInterface|null $interpolation
+     * @param string                       $pathToFiles
+     * @param InterpolationInterface|null  $interpolation
      */
-    public function __construct($pathToFiles, InterpolationInterface $interpolation = null)
+    public function __construct(string $pathToFiles, ?InterpolationInterface $interpolation = null)
     {
         $this->PathToFiles = $pathToFiles;
         $this->Interpolation = $interpolation;
@@ -52,9 +52,9 @@ abstract class AbstractFileProvider implements ProviderInterface
         $this->initResourceReader();
     }
 
-    private function addSlashToPathIfNotThere()
+    private function addSlashToPathIfNotThere(): void
     {
-        if (substr($this->PathToFiles, -1) !== '/') {
+        if (!str_ends_with($this->PathToFiles, '/')) {
             $this->PathToFiles .= '/';
         }
     }
@@ -62,12 +62,12 @@ abstract class AbstractFileProvider implements ProviderInterface
     /**
      * @param InterpolationInterface $interpolation
      */
-    public function setInterpolation(InterpolationInterface $interpolation)
+    public function setInterpolation(InterpolationInterface $interpolation): void
     {
         $this->Interpolation = $interpolation;
     }
 
-    public function removeInterpolation()
+    public function removeInterpolation(): void
     {
         $this->Interpolation = null;
     }
@@ -77,7 +77,7 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function hasDataFor(array $latitudeLongitudes)
+    public function hasDataFor(array $latitudeLongitudes): bool
     {
         foreach ($latitudeLongitudes as $location) {
             if (!is_array($location) || count($location) !== 2) {
@@ -101,7 +101,7 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float $longitude
      * @return bool
      */
-    protected function locationIsInBounds($latitude, $longitude)
+    protected function locationIsInBounds(float $latitude, float $longitude): bool
     {
         return
             ($latitude > -static::MAX_LATITUDE) && ($latitude <= static::MAX_LATITUDE) &&
@@ -112,7 +112,7 @@ abstract class AbstractFileProvider implements ProviderInterface
     /**
      * @return bool
      */
-    public function usesInterpolation()
+    public function usesInterpolation(): bool
     {
         return null !== $this->Interpolation;
     }
@@ -121,9 +121,9 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float[]                   $latitudes
      * @param  float[]                   $longitudes
      * @return array                     elevations [m] can be false if nothing retrieved
-     * @throws InvalidArgumentException;
+     * @throws InvalidArgumentException
      */
-    public function getElevations(array $latitudes, array $longitudes)
+    public function getElevations(array $latitudes, array $longitudes): array
     {
         $numberOfPoints = count($latitudes);
         $elevations = [];
@@ -148,9 +148,9 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float                     $latitude
      * @param  float                     $longitude
      * @return int|bool                  elevation [m] can be false if nothing retrieved
-     * @throws InvalidArgumentException;
+     * @throws InvalidArgumentException
      */
-    public function getElevation($latitude, $longitude)
+    public function getElevation($latitude, $longitude): int|bool
     {
         if ($latitude === 0.0 && $longitude === 0.0) {
             return false;
@@ -180,12 +180,12 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float    $longitude
      * @return int|bool can be false if nothing retrieved
      */
-    protected function getElevationFromResource($latitude, $longitude)
+    protected function getElevationFromResource(float $latitude, float $longitude): int|bool
     {
-        list($exactRowValue, $exactColValue) = $this->getExactRowAndColFor($latitude, $longitude);
+        [$exactRowValue, $exactColValue] = $this->getExactRowAndColFor($latitude, $longitude);
 
         if (!$this->usesInterpolation()) {
-            return $this->getElevationFor(round($exactRowValue), round($exactColValue));
+            return $this->getElevationFor((int) round($exactRowValue), (int) round($exactColValue));
         }
 
         return $this->getInterpolatedElevationFor($exactRowValue, $exactColValue);
@@ -196,10 +196,10 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float    $exactColValue
      * @return int|bool can be false if nothing retrieved
      */
-    protected function getInterpolatedElevationFor($exactRowValue, $exactColValue)
+    protected function getInterpolatedElevationFor(float $exactRowValue, float $exactColValue): int|bool
     {
-        $row = floor($exactRowValue);
-        $col = floor($exactColValue);
+        $row = (int) floor($exactRowValue);
+        $col = (int) floor($exactColValue);
 
         $elevationOnBoundingBox = [
             $this->getElevationFor($row, $col),
@@ -222,26 +222,26 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @param  float  $longitude
      * @return string
      */
-    abstract protected function getFilenameFor($latitude, $longitude);
+    abstract protected function getFilenameFor(float $latitude, float $longitude): string;
 
-    abstract protected function initResourceReader();
+    abstract protected function initResourceReader(): void;
 
     /**
      * @param string $filename
      */
-    abstract protected function openResource($filename);
+    abstract protected function openResource(string $filename): void;
 
     /**
      * @param  int      $row
      * @param  int      $col
      * @return int|bool elevation [m] can be false if nothing retrieved
      */
-    abstract protected function getElevationFor($row, $col);
+    abstract protected function getElevationFor(int $row, int $col): int|bool;
 
     /**
      * @param  float $latitude
      * @param  float $longitude
      * @return array array(row, col)
      */
-    abstract protected function getExactRowAndColFor($latitude, $longitude);
+    abstract protected function getExactRowAndColFor(float $latitude, float $longitude): array;
 }

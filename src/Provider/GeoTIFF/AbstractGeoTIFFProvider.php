@@ -19,7 +19,7 @@ abstract class AbstractGeoTIFFProvider extends AbstractFileProvider
      * @param  string            $filename
      * @throws \RuntimeException
      */
-    protected function openResource($filename)
+    protected function openResource(string $filename): void
     {
         $resource = fopen($this->PathToFiles.DIRECTORY_SEPARATOR.$filename, 'rb');
 
@@ -34,7 +34,7 @@ abstract class AbstractGeoTIFFProvider extends AbstractFileProvider
      * @param  int      $col
      * @return int|bool
      */
-    protected function getElevationFor($row, $col)
+    protected function getElevationFor(int $row, int $col): int|bool
     {
         return $this->ResourceReader->getElevationFor($row, $col);
     }

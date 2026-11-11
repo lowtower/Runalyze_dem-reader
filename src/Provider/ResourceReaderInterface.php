@@ -14,16 +14,16 @@ namespace Runalyze\DEM\Provider;
 interface ResourceReaderInterface
 {
     /**
-     * @param resource $resource
+     * @param \Resource $resource
      */
-    public function setResource($resource);
+    public function setResource(\Resource $resource): void;
 
-    public function readHeader();
+    public function readHeader(): void;
 
     /**
      * @param  int      $row
      * @param  int      $col
      * @return int|bool elevation [m] can be false if nothing retrieved or value is unknown
      */
-    public function getElevationFor($row, $col);
+    public function getElevationFor(int $row, int $col): int|bool;
 }

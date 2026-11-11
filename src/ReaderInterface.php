@@ -19,7 +19,7 @@ interface ReaderInterface
      * @param  array $latitudeLongitudes array(array($lat, $lng), ...)
      * @return bool
      */
-    public function hasDataFor(array $latitudeLongitudes);
+    public function hasDataFor(array $latitudeLongitudes): bool;
 
     /**
      * @param  float[]                  $latitudes
@@ -27,5 +27,5 @@ interface ReaderInterface
      * @return array                    elevations [m] can be false if nothing retrieved
      * @throws InvalidArgumentException
      */
-    public function getElevations(array $latitudes, array $longitudes);
+    public function getElevations(array $latitudes, array $longitudes): array;
 }

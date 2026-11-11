@@ -16,41 +16,41 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 class SRTM4Provider extends AbstractGeoTIFFProvider
 {
     /** @var int */
-    const MAX_LATITUDE = 60;
+    protected const int MAX_LATITUDE = 60;
 
     /** @var int */
-    const MAX_LONGITUDE = 180;
+    protected const int MAX_LONGITUDE = 180;
 
     /** @var float */
-    const DEGREES_PER_TILE = 5.0;
+    protected const float DEGREES_PER_TILE = 5.0;
 
     /** @var float */
-    protected $CurrentTileHorizontalReference;
+    protected float $CurrentTileHorizontalReference;
 
     /** @var float */
-    protected $CurrentTileVerticalReference;
+    protected float $CurrentTileVerticalReference;
 
     /** @var float top left latitude */
-    protected $CurrentTileLatitude;
+    protected float $CurrentTileLatitude;
 
     /** @var float top left longitude */
-    protected $CurrentTileLongitude;
+    protected float $CurrentTileLongitude;
 
     /** @var string */
-    protected $FilenameFormat = 'srtm_%02d_%02d.tif';
+    protected string $FilenameFormat = 'srtm_%02d_%02d.tif';
 
     /** @var GeoTIFFReader */
-    protected $ResourceReader;
+    protected GeoTIFFReader $ResourceReader;
 
-    public function initResourceReader()
+    public function initResourceReader(): void
     {
         $this->ResourceReader = new GeoTIFFReader();
     }
 
     /**
-     * @param $format
+     * @param string $format
      */
-    public function setFilenameFormat($format)
+    public function setFilenameFormat(string $format): void
     {
         $this->FilenameFormat = $format;
     }
@@ -61,7 +61,7 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function getFilenameFor($latitude, $longitude)
+    protected function getFilenameFor(float $latitude, float $longitude): string
     {
         $this->loadTileReferencesFor($latitude, $longitude);
 
@@ -72,15 +72,15 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
      * @param float $latitude
      * @param float $longitude
      */
-    protected function loadTileReferencesFor($latitude, $longitude)
+    protected function loadTileReferencesFor(float $latitude, float $longitude): void
     {
-        if (fmod($latitude, static::DEGREES_PER_TILE) === 0.0) {
+        if (abs(fmod($latitude, static::DEGREES_PER_TILE)) < PHP_FLOAT_EPSILON) {
             $this->CurrentTileVerticalReference = (static::MAX_LATITUDE - $latitude) / static::DEGREES_PER_TILE + 1;
         } else {
             $this->CurrentTileVerticalReference = ceil((static::MAX_LATITUDE - $latitude) / static::DEGREES_PER_TILE);
         }
 
-        if (fmod($longitude, static::DEGREES_PER_TILE) === 0.0) {
+        if (abs(fmod($longitude, static::DEGREES_PER_TILE)) < PHP_FLOAT_EPSILON) {
             $this->CurrentTileHorizontalReference = (static::MAX_LONGITUDE + $longitude) / static::DEGREES_PER_TILE + 1;
         } else {
             $this->CurrentTileHorizontalReference = ceil((static::MAX_LONGITUDE + $longitude) / static::DEGREES_PER_TILE);
@@ -99,7 +99,7 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
      * @param  float   $longitude
      * @return float[] array(row, col)
      */
-    protected function getExactRowAndColFor($latitude, $longitude)
+    protected function getExactRowAndColFor(float $latitude, float $longitude): array
     {
         return $this->ResourceReader->getExactRowAndColFor(
             abs($this->CurrentTileLatitude - abs($latitude)) / static::DEGREES_PER_TILE,
