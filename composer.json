@@ -7,12 +7,12 @@
     "php": ">=8.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.0 || ^10.0 || ^11.0",
-    "friendsofphp/php-cs-fixer": "^3.2",
-    "phpstan/phpstan": "^1.10",
-    "rector/rector": "^1.0",
-    "nette/utils": "^4.0",
-    "phpunit/php-code-coverage": "^9.0 || ^10.0 || ^11.0",
+    "phpunit/phpunit": " ^10.0 ",
+    "friendsofphp/php-cs-fixer": "^3.95",
+    "phpstan/phpstan": "^1.12",
+    "rector/rector": "^1.2",
+    "nette/utils": "^4.1",
+    "phpunit/php-code-coverage": " ^10.0 ",
     "phpunit/php-invoker": "^3.1 || ^4.0"
   },
   "config": {
