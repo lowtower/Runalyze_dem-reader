@@ -35,14 +35,6 @@ jobs:
       - name: Run PHPUnit tests with coverage
         run: vendor/bin/phpunit --colors=never --coverage-clover=coverage.clover --coverage-xml=coverage.xml
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.xml
-          flags: unittests
-          name: PHP-${{ matrix.php }}
-
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src --level=5 --no-progress
 
@@ -96,13 +88,19 @@ jobs:
         run: vendor/bin/rector process src --dry-run --verbose
 
   coverage:
-    name: Coverage Check
+    name: Coverage Report
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -114,33 +112,49 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Run PHPUnit with coverage
-        run: vendor/bin/phpunit --coverage-clover=coverage.clover --coverage-xml=coverage.xml
+      - name: Run PHPUnit with coverage (HTML + XML + Clover)
+        run: |
+          vendor/bin/phpunit \
+            --coverage-clover=coverage.clover \
+            --coverage-xml=coverage.xml \
+            --coverage-html=coverage-html
+
+      - name: Display coverage percentage
+        run: |
+          COVERAGE=$(grep -oP '\d+(\.\d+)?%' coverage.xml | head -1 | tr -d '%')
+          echo "Code Coverage: ${COVERAGE}%"
+          echo "coverage=${COVERAGE}" >> $GITHUB_OUTPUT
+        id: coverage
 
       - name: Check coverage threshold
         run: |
-          # Check if coverage is above minimum threshold (e.g., 70%)
           MIN_COVERAGE=70
-          COVERAGE=$(grep -oP '\d+(\.\d+)?%' coverage.xml | head -1 | tr -d '%')
+          COVERAGE=${{ steps.coverage.outputs.coverage }}
           if (( $(echo "$COVERAGE < $MIN_COVERAGE" | bc -l) )); then
-            echo "Coverage $COVERAGE% is below minimum threshold of $MIN_COVERAGE%"
+            echo "::error::Coverage $COVERAGE% is below minimum threshold of $MIN_COVERAGE%"
             exit 1
           fi
-          echo "Coverage $COVERAGE% is above minimum threshold of $MIN_COVERAGE%"
+          echo "::notice::Coverage $COVERAGE% is above minimum threshold of $MIN_COVERAGE%"
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.xml
-          flags: unittests
-          name: coverage-check
-          fail_ci_if_error: true
+          name: coverage-report
+          path: coverage-html/
+          retention-days: 30
 
-      - name: Compare coverage with main branch
-        if: github.event_name == 'pull_request'
+      - name: Prepare GitHub Pages deployment
         run: |
-          # Download main branch coverage for comparison
-          # This requires CODECOV_TOKEN to be set in repository secrets
-          echo "Codecov will handle the comparison automatically"
-          echo "If coverage drops below main branch, Codecov will fail the check"
+          mkdir -p pages
+          cp -r coverage-html/* pages/
+          echo "Coverage Report" > pages/index.html
+          echo "<meta http-equiv=\"refresh\" content=\"0; url=index.html\">" >> pages/index.html
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

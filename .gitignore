@@ -4,4 +4,5 @@ tests/testfiles/*
 # Coverage files
 coverage.clover
 coverage.xml
+coverage-html/
 .phpunit.cache/
