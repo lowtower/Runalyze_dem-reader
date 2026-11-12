@@ -76,7 +76,7 @@ abstract class AbstractFileProvider implements ProviderInterface
     public function hasDataFor(array $latitudeLongitudes): bool
     {
         foreach ($latitudeLongitudes as $location) {
-            if (count($location) !== 2) {
+            if (!is_array($location) || count($location) !== 2) {
                 throw new InvalidArgumentException('Locations must be arrays of two values.');
             }
 
