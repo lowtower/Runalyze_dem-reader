@@ -18,10 +18,7 @@ use Runalyze\DEM\Provider\GeoTIFF\SRTM4Provider;
 
 final class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var string
-     */
-    public const PATH_TO_FILES = '/../../../../tests/testfiles';
+    public const string PATH_TO_FILES = '/../../../../tests/testfiles';
 
     /**
      * @var SRTM4Provider

@@ -17,20 +17,11 @@ use Runalyze\DEM\Provider\ResourceReaderInterface;
 
 class SRTM4Provider extends AbstractGeoTIFFProvider
 {
-    /**
-     * @var int
-     */
-    protected const MAX_LATITUDE = 60;
+    protected const int MAX_LATITUDE = 60;
 
-    /**
-     * @var int
-     */
-    protected const MAX_LONGITUDE = 180;
+    protected const int MAX_LONGITUDE = 180;
 
-    /**
-     * @var float
-     */
-    protected const DEGREES_PER_TILE = 5.0;
+    protected const float DEGREES_PER_TILE = 5.0;
 
     protected float $CurrentTileHorizontalReference;
 

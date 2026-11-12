@@ -15,7 +15,9 @@ class LambdaInterpolation implements InterpolationInterface
 {
     use ArgumentsCheckTrait;
 
-    /** @var \Closure(float, float, array): int */
+    /**
+     * @var \Closure(float, float, array): int
+     */
     protected $Lambda;
 
     /**
@@ -24,7 +26,7 @@ class LambdaInterpolation implements InterpolationInterface
      */
     public function __construct($interpolationFunction)
     {
-        if (!$this->isValidClosure($interpolationFunction)) {
+        if (! $this->isValidClosure($interpolationFunction)) {
             throw new \Runalyze\DEM\Exception\InvalidArgumentException('Provided closure does not fulfill the requirements.');
         }
 

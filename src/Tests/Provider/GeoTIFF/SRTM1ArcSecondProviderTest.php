@@ -18,10 +18,7 @@ use Runalyze\DEM\Provider\GeoTIFF\SRTM1ArcSecondProvider;
 
 final class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var string
-     */
-    public const PATH_TO_FILES = '/../../../../tests/testfiles';
+    public const string PATH_TO_FILES = '/../../../../tests/testfiles';
 
     /**
      * @var SRTM1ArcSecondProvider

@@ -51,13 +51,7 @@ class Reader implements ReaderInterface
      */
     public function hasDataFor(array $latitudeLongitudes): bool
     {
-        foreach ($this->Provider as $provider) {
-            if ($provider->hasDataFor($latitudeLongitudes)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->Provider, fn (\Runalyze\DEM\Provider\ProviderInterface $provider): bool => $provider->hasDataFor($latitudeLongitudes));
     }
 
     /**

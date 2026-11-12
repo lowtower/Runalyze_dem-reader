@@ -21,70 +21,35 @@ class GeoTIFFReader extends AbstractResourceReader
 {
     /**
      * The number of bytes required to hold a TIFF offset address.
-     * @var int
      */
-    public const LEN_OFFSET = 4;
+    public const int LEN_OFFSET = 4;
 
     /**
      * Magic number located at bytes 2-3 which identifies a TIFF file.
-     * @var int
      */
-    public const MAGIC_TIFF_ID = 42;
+    public const int MAGIC_TIFF_ID = 42;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_STRIPOFSETS = 273;
+    public const int TIFF_CONST_STRIPOFSETS = 273;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_IMAGE_WIDTH = 256;
+    public const int TIFF_CONST_IMAGE_WIDTH = 256;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_IMAGE_LENGTH = 257;
+    public const int TIFF_CONST_IMAGE_LENGTH = 257;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_BITS_PER_SAMPLE = 258;
+    public const int TIFF_CONST_BITS_PER_SAMPLE = 258;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_SAMPLES_PER_PIXEL = 277;
+    public const int TIFF_CONST_SAMPLES_PER_PIXEL = 277;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_ROWS_PER_STRIP = 278;
+    public const int TIFF_CONST_ROWS_PER_STRIP = 278;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_STRIPBYTECOUNTS = 279;
+    public const int TIFF_CONST_STRIPBYTECOUNTS = 279;
 
-    /**
-     * @var int
-     */
-    public const TIFF_CONST_IFD_ENTRY_BYTES = 12;
+    public const int TIFF_CONST_IFD_ENTRY_BYTES = 12;
 
-    /**
-     * @var string
-     */
-    public const BIG_ENDIAN = 'MM';
+    public const string BIG_ENDIAN = 'MM';
 
-    /**
-     * @var string
-     */
-    public const LITTLE_ENDIAN = 'II';
+    public const string LITTLE_ENDIAN = 'II';
 
-    /**
-     * @var int
-     */
-    public const UNKNOWN = -32768;
+    public const int UNKNOWN = -32768;
 
     /**
      * @var int The number of bytes containing each item of elevation data

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -13,10 +15,7 @@ namespace Runalyze\DEM\Provider\GeoTIFF;
 
 class SRTM1ArcSecondProvider extends SRTM4Provider
 {
-    /**
-     * @var float
-     */
-    protected const DEGREES_PER_TILE = 1.0;
+    protected const float DEGREES_PER_TILE = 1.0;
 
     protected string $FilenameFormat = '%s%02d_%s%03d.tif';
 

@@ -15,7 +15,7 @@ return RectorConfig::configure()
     ->withIndent(indentChar: ' ', indentSize: 4)
     ->withTreatClassesAsFinal()
     ->withSets([
-        LevelSetList::UP_TO_PHP_85,
+        LevelSetList::UP_TO_PHP_84,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ])
     ->withTypeCoverageLevel(67)         # max level 67

@@ -33,7 +33,7 @@ final class ReaderTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        (new Reader())->getElevations([42.0, 42.2], [3.14, 3.14159]);
+        new Reader()->getElevations([42.0, 42.2], [3.14, 3.14159]);
     }
 
     public function testReaderWithNoProviderThatCanHandleTheLocations(): void
