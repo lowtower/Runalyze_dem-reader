@@ -45,8 +45,5 @@
     ],
     "test": "phpunit",
     "test-coverage": "phpunit --coverage-clover=coverage.clover --coverage-xml=coverage.xml --coverage-html=coverage-html"
-  },
-  "config": {
-    "sort-packages": true
   }
 }
