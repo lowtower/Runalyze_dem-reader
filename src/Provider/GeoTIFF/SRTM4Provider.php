@@ -11,6 +11,8 @@
 
 namespace Runalyze\DEM\Provider\GeoTIFF;
 
+use Runalyze\DEM\Provider\ResourceReaderInterface;
+
 class SRTM4Provider extends AbstractGeoTIFFProvider
 {
     /**
@@ -44,6 +46,7 @@ class SRTM4Provider extends AbstractGeoTIFFProvider
 
     protected string $FilenameFormat = 'srtm_%02d_%02d.tif';
 
+    /** @var \Runalyze\DEM\Provider\ResourceReaderInterface */
     protected ResourceReaderInterface $ResourceReader;
 
     protected function initResourceReader(): void
