@@ -38,11 +38,14 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src --level=8 --no-progress
 
+      - name: Run Rector
+        run: vendor/bin/rector process src --dry-run
+
       - name: Check PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix -v --diff --dry-run
 
-      - name: Run Rector
-        run: vendor/bin/rector process src --dry-run
+      - name: Run ECS
+        run: vendor/bin/ecs check --ansi
 
   static-analysis:
     name: Static Analysis
@@ -81,11 +84,14 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Run Rector
+        run: vendor/bin/rector process src --dry-run
+
       - name: Run PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
 
-      - name: Run Rector
-        run: vendor/bin/rector process src --dry-run --verbose
+      - name: Run ECS
+        run: vendor/bin/ecs check --ansi
 
   coverage:
     name: Coverage Report
