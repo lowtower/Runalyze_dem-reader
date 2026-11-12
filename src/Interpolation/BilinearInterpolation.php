@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -16,8 +18,6 @@ class BilinearInterpolation implements InterpolationInterface
     use ArgumentsCheckTrait;
 
     /**
-     * Interpolate.
-     *
      * p0------------p1
      * |      |
      * |      y
@@ -28,11 +28,11 @@ class BilinearInterpolation implements InterpolationInterface
      *
      * @param  float                    $x                      x position of Z within bounding box, required: $x in [0.0, 1.0]
      * @param  float                    $y                      y position of Z within bounding box, required: $y in [0.0, 1.0]
-     * @param  array                    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @return int                      estimated elevation on point Z
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    public function interpolate($x, $y, array $elevationOnBoundingBox)
+    public function interpolate(float $x, float $y, array $elevationOnBoundingBox): int
     {
         $this->checkArguments($x, $y, $elevationOnBoundingBox);
 

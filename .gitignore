@@ -1,2 +1,9 @@
 vendor/
 tests/testfiles/*
+.php-cs-fixer.cache
+
+# Coverage files
+coverage.clover
+coverage.xml
+coverage-html/
+.phpunit.cache/

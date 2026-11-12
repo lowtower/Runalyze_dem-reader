@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -14,20 +16,18 @@ namespace Runalyze\DEM\Provider;
 trait GuessInvalidValuesTrait
 {
     /**
-     * @param array $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param array<int|bool|float> $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      */
-    protected function guessInvalidValuesOnBox(array &$elevationOnBoundingBox)
+    protected function guessInvalidValuesOnBox(array &$elevationOnBoundingBox): void
     {
-        $validValues = array_filter($elevationOnBoundingBox, function ($val) {
-            return false !== $val;
-        });
+        $validValues = array_filter($elevationOnBoundingBox, fn (mixed $val): bool => $val !== false);
         $numValidValues = count($validValues);
 
         if ($numValidValues > 0) {
             $average = array_sum($validValues) / $numValidValues;
 
             foreach ($elevationOnBoundingBox as $i => $value) {
-                if (false === $value) {
+                if ($value === false) {
                     $elevationOnBoundingBox[$i] = $average;
                 }
             }

@@ -16,68 +16,51 @@ use Runalyze\DEM\Provider\ProviderInterface;
 
 class Reader implements ReaderInterface
 {
-    /** @var ProviderInterface[] */
-    protected $Provider = [];
-
-    /** @var bool */
-    protected $InvalidFlag = false;
-
     /**
-     * @param ProviderInterface|null $provider
+     * @var ProviderInterface[]
      */
-    public function __construct(ProviderInterface $provider = null)
+    protected array $Provider = [];
+
+    protected bool $InvalidFlag = false;
+
+    public function __construct(?ProviderInterface $provider = null)
     {
-        if (null !== $provider) {
+        if ($provider instanceof \Runalyze\DEM\Provider\ProviderInterface) {
             $this->addProvider($provider);
         }
     }
 
-    /**
-     * @param ProviderInterface $provider
-     */
-    public function addProvider(ProviderInterface $provider)
+    public function addProvider(ProviderInterface $provider): void
     {
         $this->Provider[] = $provider;
     }
 
-    /**
-     * @return int
-     */
-    public function numberOfProviders()
+    public function numberOfProviders(): int
     {
         return count($this->Provider);
     }
 
-    /**
-     * @return bool
-     */
-    public function hasProviders()
+    public function hasProviders(): bool
     {
-        return !empty($this->Provider);
+        return $this->Provider !== [];
     }
 
     /**
-     * @param  array $latitudeLongitudes array(array($lat, $lng), ...)
-     * @return bool
+     * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
-    public function hasDataFor(array $latitudeLongitudes)
+    public function hasDataFor(array $latitudeLongitudes): bool
     {
-        foreach ($this->Provider as $provider) {
-            if ($provider->hasDataFor($latitudeLongitudes)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->Provider, fn (\Runalyze\DEM\Provider\ProviderInterface $provider): bool => $provider->hasDataFor($latitudeLongitudes));
     }
 
     /**
-     * @param  array            $latitudes
-     * @param  array            $longitudes
-     * @return array            elevations [m] can be false if nothing retrieved
-     * @throws RuntimeException
+     * @param  array<float>     $latitudes
+     * @param  array<float>     $longitudes
+     * @return array<int|bool>  elevations [m] can be false if nothing retrieved
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
-    public function getElevations(array $latitudes, array $longitudes)
+    public function getElevations(array $latitudes, array $longitudes): array
     {
         $boundaries = $this->getBoundsFor($latitudes, $longitudes);
 
@@ -91,16 +74,16 @@ class Reader implements ReaderInterface
     }
 
     /**
-     * @param  float[] $latitudes
-     * @param  float[] $longitudes
-     * @return array   array(array($lat, $lng), ...)
+     * @param  array<float> $latitudes
+     * @param  array<float> $longitudes
+     * @return array<array{0:float,1:float}>   array(array($lat, $lng), ...)
      */
-    protected function getBoundsFor(array $latitudes, array $longitudes)
+    protected function getBoundsFor(array $latitudes, array $longitudes): array
     {
         $filteredLatitudes = array_filter($latitudes);
         $filteredLongitudes = array_filter($longitudes);
 
-        if (empty($filteredLatitudes) || empty($filteredLongitudes)) {
+        if ($filteredLatitudes === [] || $filteredLongitudes === []) {
             return [];
         }
 

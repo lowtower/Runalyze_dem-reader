@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -14,48 +16,50 @@ namespace Runalyze\DEM\Tests\Provider;
 use Runalyze\DEM\Exception\InvalidArgumentException;
 use Runalyze\DEM\Provider\AbstractFileProvider;
 
-class AbstractFileProviderTest extends \PHPUnit\Framework\TestCase
+final class AbstractFileProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var AbstractFileProvider */
-    protected $Object;
+    /**
+     * @var AbstractFileProvider
+     */
+    protected \PHPUnit\Framework\MockObject\MockObject $Object;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->Object = $this->getMockForAbstractClass('\\Runalyze\\DEM\\Provider\\AbstractFileProvider', ['path/to/files']);
+        $this->Object = $this->getMockForAbstractClass(\Runalyze\DEM\Provider\AbstractFileProvider::class, ['path/to/files']);
     }
 
-    public function testInvalidArgument()
+    public function testInvalidArgument(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->Object->hasDataFor(['foo', 'bar']);
     }
 
-    public function testTooManyCoordinatesInLocationArray()
+    public function testTooManyCoordinatesInLocationArray(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->Object->hasDataFor([[47.7, 47.6, 47.5]]);
     }
 
-    public function testThatTheProviderHasNoDataAsThereAreNoFiles()
+    public function testThatTheProviderHasNoDataAsThereAreNoFiles(): void
     {
         $this->assertFalse($this->Object->hasDataFor([[49.4, 7.7]]));
     }
 
-    public function testThatGetElevationsRequiresEqualSizedArrays()
+    public function testThatGetElevationsRequiresEqualSizedArrays(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->Object->getElevations([1, 2, 3], [1, 2, 3, 4]);
     }
 
-    public function testUnknownLocation()
+    public function testUnknownLocation(): void
     {
         $this->assertFalse($this->Object->getElevation(0.0, 0.0));
     }
 
-    public function testInvalidLocation()
+    public function testInvalidLocation(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

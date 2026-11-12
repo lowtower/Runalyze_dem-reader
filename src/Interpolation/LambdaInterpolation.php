@@ -11,58 +11,53 @@
 
 namespace Runalyze\DEM\Interpolation;
 
-use Runalyze\DEM\Exception\InvalidArgumentException;
-
 class LambdaInterpolation implements InterpolationInterface
 {
     use ArgumentsCheckTrait;
 
-    /** @var \Closure */
+    /**
+     * @var \Closure(float, float, array): int
+     */
     protected $Lambda;
 
     /**
-     * LambdaInterpolation constructor.
-     * @param  \Closure                 $interpolationFunction
-     * @throws InvalidArgumentException
+     * @param  \Closure $interpolationFunction
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    public function __construct(\Closure $interpolationFunction)
+    public function __construct($interpolationFunction)
     {
-        if (!$this->isValidClosure($interpolationFunction)) {
-            throw new InvalidArgumentException('Provided closure does not fulfill the requirements.');
+        if (! $this->isValidClosure($interpolationFunction)) {
+            throw new \Runalyze\DEM\Exception\InvalidArgumentException('Provided closure does not fulfill the requirements.');
         }
 
         $this->Lambda = $interpolationFunction;
     }
 
     /**
-     * @param  \Closure $function
-     * @return bool
+     * @param  \Closure|string $function
      */
-    protected function isValidClosure(\Closure $function)
+    protected function isValidClosure($function): bool
     {
         $Reflection = new \ReflectionFunction($function);
 
-        return 3 === $Reflection->getNumberOfRequiredParameters();
+        return $Reflection->getNumberOfRequiredParameters() === 3;
     }
 
     /**
-     * Interpolate.
-     *
      * p0------------p1
      * |      |
      * |      y
      * |      |
      * |--x-- Z
-     * |
-     * p2------------p3
+     * |\n     * p2------------p3
      *
      * @param  float                    $x                      x position of Z within bounding box, required: $x in [0.0, 1.0]
      * @param  float                    $y                      y position of Z within bounding box, required: $y in [0.0, 1.0]
-     * @param  array                    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @return int                      estimated elevation on point Z
-     * @throws InvalidArgumentException
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    public function interpolate($x, $y, array $elevationOnBoundingBox)
+    public function interpolate(float $x, float $y, array $elevationOnBoundingBox): int
     {
         $this->checkArguments($x, $y, $elevationOnBoundingBox);
 

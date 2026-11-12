@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -16,22 +18,20 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 trait ArgumentsCheckTrait
 {
     /**
-     * @param  float                    $x
-     * @param  float                    $y
-     * @param  array                    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
-     * @throws InvalidArgumentException
+     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    protected function checkArguments($x, $y, array $elevationOnBoundingBox)
+    protected function checkArguments(float $x, float $y, array $elevationOnBoundingBox): void
     {
-        if (4 !== count($elevationOnBoundingBox)) {
+        if (count($elevationOnBoundingBox) !== 4) {
             throw new InvalidArgumentException('Array with elevation on bounding box must have four values.');
         }
 
-        if ($x < 0.0 || 1.0 < $x) {
+        if ($x < 0.0 || $x > 1.0) {
             throw new InvalidArgumentException('$x must be within [0.0, 1.0]');
         }
 
-        if ($y < 0.0 || 1.0 < $y) {
+        if ($y < 0.0 || $y > 1.0) {
             throw new InvalidArgumentException('$y must be within [0.0, 1.0]');
         }
     }

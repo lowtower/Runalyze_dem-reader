@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -15,18 +17,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Runalyze\DEM\Exception\RuntimeException;
 use Runalyze\DEM\Provider\AbstractResourceReader;
 
-class AbstractResourceReaderTest extends \PHPUnit\Framework\TestCase
+final class AbstractResourceReaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param  resource|bool                     $resource
-     * @return MockObject|AbstractResourceReader
      */
     protected function constructMock($resource = false): MockObject|AbstractResourceReader
     {
-        return $this->getMockForAbstractClass('\\Runalyze\\DEM\\Provider\\AbstractResourceReader', [$resource]);
+        return $this->getMockForAbstractClass(\Runalyze\DEM\Provider\AbstractResourceReader::class, [$resource]);
     }
 
-    public function testConstructorAndDestructorWithoutResource()
+    public function testConstructorAndDestructorWithoutResource(): void
     {
         $this->expectNotToPerformAssertions();
 
@@ -34,7 +35,7 @@ class AbstractResourceReaderTest extends \PHPUnit\Framework\TestCase
         unset($Reader);
     }
 
-    public function testSettingInvalidResource()
+    public function testSettingInvalidResource(): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -42,7 +43,7 @@ class AbstractResourceReaderTest extends \PHPUnit\Framework\TestCase
         $Reader->setResource(false);
     }
 
-    public function testReadingThisFileForSomeFun()
+    public function testReadingThisFileForSomeFun(): void
     {
         $this->expectNotToPerformAssertions();
 

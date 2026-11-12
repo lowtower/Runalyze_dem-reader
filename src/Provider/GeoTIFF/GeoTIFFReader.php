@@ -21,71 +21,60 @@ class GeoTIFFReader extends AbstractResourceReader
 {
     /**
      * The number of bytes required to hold a TIFF offset address.
-     * @var int
      */
-    const LEN_OFFSET = 4;
+    public const int LEN_OFFSET = 4;
 
     /**
      * Magic number located at bytes 2-3 which identifies a TIFF file.
-     * @var int
      */
-    const MAGIC_TIFF_ID = 42;
+    public const int MAGIC_TIFF_ID = 42;
 
-    /** @var int */
-    const TIFF_CONST_STRIPOFSETS = 273;
+    public const int TIFF_CONST_STRIPOFSETS = 273;
 
-    /** @var int */
-    const TIFF_CONST_IMAGE_WIDTH = 256;
+    public const int TIFF_CONST_IMAGE_WIDTH = 256;
 
-    /** @var int */
-    const TIFF_CONST_IMAGE_LENGTH = 257;
+    public const int TIFF_CONST_IMAGE_LENGTH = 257;
 
-    /** @var int */
-    const TIFF_CONST_BITS_PER_SAMPLE = 258;
+    public const int TIFF_CONST_BITS_PER_SAMPLE = 258;
 
-    /** @var int */
-    const TIFF_CONST_SAMPLES_PER_PIXEL = 277;
+    public const int TIFF_CONST_SAMPLES_PER_PIXEL = 277;
 
-    /** @var int */
-    const TIFF_CONST_ROWS_PER_STRIP = 278;
+    public const int TIFF_CONST_ROWS_PER_STRIP = 278;
 
-    /** @var int */
-    const TIFF_CONST_STRIPBYTECOUNTS = 279;
+    public const int TIFF_CONST_STRIPBYTECOUNTS = 279;
 
-    /** @var int */
-    const TIFF_CONST_IFD_ENTRY_BYTES = 12;
+    public const int TIFF_CONST_IFD_ENTRY_BYTES = 12;
 
-    /** @var string */
-    const BIG_ENDIAN = 'MM';
+    public const string BIG_ENDIAN = 'MM';
 
-    /** @var string */
-    const LITTLE_ENDIAN = 'II';
+    public const string LITTLE_ENDIAN = 'II';
 
-    /** @var int */
-    const UNKNOWN = -32768;
+    public const int UNKNOWN = -32768;
 
-    /** @var int The number of bytes containing each item of elevation data */
-    protected $BytesPerSample = 2;
+    /**
+     * @var int The number of bytes containing each item of elevation data
+     */
+    protected int $BytesPerSample = 2;
 
-    /** @var int 	The number of components per pixel */
-    protected $SamplesPerPixel = 1;
+    /**
+     * @var int 	The number of components per pixel
+     */
+    protected int $SamplesPerPixel = 1;
 
-    /** @var int The number of rows per strip */
-    protected $RowsPerStrip = 1;
+    /**
+     * @var int The number of rows per strip
+     */
+    protected int $RowsPerStrip = 1;
 
-    /** @var int */
-    protected $NumDataRows;
+    protected int $NumDataRows = 0;
 
-    /** @var int */
-    protected $NumDataCols;
+    protected int $NumDataCols = 0;
 
-    /** @var int */
-    protected $StripOffsets;
+    protected int $StripOffsets = 0;
 
-    /** @var string */
-    protected $ByteOrder;
+    protected string $ByteOrder = '';
 
-    public function readHeader()
+    public function readHeader(): void
     {
         $this->checkByteOrderAndTiffIdentifier();
         $this->goToIFDEntries();
@@ -94,20 +83,28 @@ class GeoTIFFReader extends AbstractResourceReader
 
     /**
      * Go to the file header and work out the byte order (bytes 0-1) and TIFF identifier (bytes 2-3).
-     * @throws RuntimeException
+     * @throws \Runalyze\DEM\Exception\RuntimeException
      */
-    protected function checkByteOrderAndTiffIdentifier()
+    protected function checkByteOrderAndTiffIdentifier(): void
     {
-        fseek($this->FileResource, 0);
-        $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, 4));
+        if (! is_resource($this->FileResource)) {
+            throw new RuntimeException('File resource is not valid.');
+        }
 
-        if (static::MAGIC_TIFF_ID !== $data['TIFF_ID']) {
+        fseek($this->FileResource, 0);
+        $data = unpack('c2chars/vTIFF_ID', fread($this->FileResource, max(1, 4)) ?: '');
+
+        if ($data === false || ! isset($data['TIFF_ID'])) {
+            throw new RuntimeException('Provided GeoTIFF file is not a valid tiff file.');
+        }
+
+        if ($data['TIFF_ID'] !== self::MAGIC_TIFF_ID) {
             throw new RuntimeException('Provided GeoTIFF file is not a valid tiff file.');
         }
 
         $this->ByteOrder = sprintf('%c%c', $data['chars1'], $data['chars2']);
 
-        if ($this->ByteOrder !== static::LITTLE_ENDIAN && $this->ByteOrder !== static::BIG_ENDIAN) {
+        if ($this->ByteOrder !== self::LITTLE_ENDIAN && $this->ByteOrder !== self::BIG_ENDIAN) {
             throw new RuntimeException('Provided GeoTIFF file has an unknown byte order.');
         }
     }
@@ -115,65 +112,81 @@ class GeoTIFFReader extends AbstractResourceReader
     /**
      * The remaining 4 bytes in the header are the offset to the IFD.
      */
-    protected function goToIFDEntries()
+    protected function goToIFDEntries(): void
     {
+        if (! is_resource($this->FileResource)) {
+            throw new RuntimeException('File resource is not valid.');
+        }
+
         fseek($this->FileResource, 4);
 
         $ifdOffsetFormat = $this->isLittleEndian() ? 'VIFDoffset' : 'NIFDoffset';
-        $data = unpack($ifdOffsetFormat, fread($this->FileResource, 4));
+        $data = unpack($ifdOffsetFormat, fread($this->FileResource, max(1, 4)) ?: '');
 
-        fseek($this->FileResource, $data['IFDoffset']);
+        if ($data === false || ! isset($data['IFDoffset'])) {
+            throw new RuntimeException('Could not read IFD offset from GeoTIFF file.');
+        }
+
+        fseek($this->FileResource, (int) $data['IFDoffset']);
     }
 
     /**
      * Read IFD entries which (the number of entries in each is in the first two bytes).
      */
-    protected function readIFDEntries()
+    protected function readIFDEntries(): void
     {
+        if (! is_resource($this->FileResource)) {
+            throw new RuntimeException('File resource is not valid.');
+        }
+
         $countFormat = $this->isLittleEndian() ? 'vcount' : 'ncount';
-        $countData = unpack($countFormat, fread($this->FileResource, 2));
+        $countData = unpack($countFormat, fread($this->FileResource, max(1, 2)) ?: '');
+
+        if ($countData === false || ! isset($countData['count'])) {
+            throw new RuntimeException('Could not read IFD entry count from GeoTIFF file.');
+        }
+
         $ifdFormat = $this->isLittleEndian() ? 'vtag/vtype/Vcount/Voffset' : 'ntag/ntype/Ncount/Noffset';
 
         for ($i = 0; $i < $countData['count']; ++$i) {
-            $constData = unpack($ifdFormat, fread($this->FileResource, static::TIFF_CONST_IFD_ENTRY_BYTES));
+            $constData = unpack($ifdFormat, fread($this->FileResource, max(1, self::TIFF_CONST_IFD_ENTRY_BYTES)) ?: '');
+
+            if ($constData === false || ! isset($constData['tag'])) {
+                continue;
+            }
 
             switch ($constData['tag']) {
-                case static::TIFF_CONST_IMAGE_WIDTH:
+                case self::TIFF_CONST_IMAGE_WIDTH:
                     $this->NumDataCols = $constData['offset'];
                     break;
-                case static::TIFF_CONST_IMAGE_LENGTH:
+                case self::TIFF_CONST_IMAGE_LENGTH:
                     $this->NumDataRows = $constData['offset'];
                     break;
-                case static::TIFF_CONST_BITS_PER_SAMPLE:
+                case self::TIFF_CONST_BITS_PER_SAMPLE:
                     $this->BytesPerSample = (int) ($constData['offset'] / 8);
                     break;
-                case static::TIFF_CONST_SAMPLES_PER_PIXEL:
+                case self::TIFF_CONST_SAMPLES_PER_PIXEL:
                     $this->SamplesPerPixel = $constData['offset'];
                     break;
-                case static::TIFF_CONST_ROWS_PER_STRIP:
+                case self::TIFF_CONST_ROWS_PER_STRIP:
                     $this->RowsPerStrip = $constData['offset'];
                     break;
-                case static::TIFF_CONST_STRIPOFSETS:
+                case self::TIFF_CONST_STRIPOFSETS:
                     $this->StripOffsets = $constData['offset'];
                     break;
             }
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function isLittleEndian()
+    protected function isLittleEndian(): bool
     {
-        return static::LITTLE_ENDIAN === $this->ByteOrder;
+        return $this->ByteOrder === self::LITTLE_ENDIAN;
     }
 
     /**
-     * @param  float   $relativeLatitude
-     * @param  float   $relativeLongitude
-     * @return float[] array(row, col)
+     * @return array{0:float,1:float} array(row, col)
      */
-    public function getExactRowAndColFor($relativeLatitude, $relativeLongitude)
+    public function getExactRowAndColFor(float $relativeLatitude, float $relativeLongitude): array
     {
         return [
             $relativeLatitude * ($this->NumDataRows - 1),
@@ -181,20 +194,29 @@ class GeoTIFFReader extends AbstractResourceReader
         ];
     }
 
-    /**
-     * @param  int      $row
-     * @param  int      $col
-     * @return int|bool
-     */
-    public function getElevationFor($row, $col)
+    public function getElevationFor(int $row, int $col): int|bool
     {
-        fseek($this->FileResource, $this->StripOffsets + ceil($row / $this->RowsPerStrip) * static::LEN_OFFSET);
+        if (! is_resource($this->FileResource)) {
+            return false;
+        }
 
-        $firstColumnData = unpack('Voffset', fread($this->FileResource, static::LEN_OFFSET));
+        fseek($this->FileResource, $this->StripOffsets + (int) ceil($row / $this->RowsPerStrip) * self::LEN_OFFSET);
 
-        fseek($this->FileResource, $firstColumnData['offset'] + ($this->NumDataCols * ($row % $this->RowsPerStrip) + $col) * $this->BytesPerSample);
+        $firstColumnData = unpack('Voffset', fread($this->FileResource, max(1, self::LEN_OFFSET)) ?: '');
 
-        $elevation = unpack('velevation', fread($this->FileResource, $this->BytesPerSample))['elevation'];
+        if ($firstColumnData === false || ! isset($firstColumnData['offset'])) {
+            return false;
+        }
+
+        fseek($this->FileResource, (int) $firstColumnData['offset'] + ($this->NumDataCols * ($row % $this->RowsPerStrip) + $col) * $this->BytesPerSample);
+
+        $elevationData = unpack('velevation', fread($this->FileResource, max(1, $this->BytesPerSample)) ?: '');
+
+        if ($elevationData === false || ! isset($elevationData['elevation'])) {
+            return false;
+        }
+
+        $elevation = $elevationData['elevation'];
 
         return ($elevation <= self::UNKNOWN || $elevation >= -self::UNKNOWN) ? false : $elevation;
     }

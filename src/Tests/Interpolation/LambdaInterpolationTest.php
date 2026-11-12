@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -13,34 +15,28 @@ namespace Runalyze\DEM\Tests\Interpolation;
 
 use Runalyze\DEM\Interpolation\LambdaInterpolation;
 
-class LambdaInterpolationTest extends \PHPUnit\Framework\TestCase
+final class LambdaInterpolationTest extends \PHPUnit\Framework\TestCase
 {
-    public function testInvalidClosure()
+    public function testInvalidClosure(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new LambdaInterpolation(function () {
-            return 1;
-        });
+        new LambdaInterpolation(fn (): int => 1);
     }
 
-    public function testThatInvalidCallsAreDetected()
+    public function testThatInvalidCallsAreDetected(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $Interpolation = new LambdaInterpolation(function ($x, $y, array $elevationOnBoundingBox) {
-            return 1;
-        });
+        $Interpolation = new LambdaInterpolation(fn ($x, $y, array $elevationOnBoundingBox): int => 1);
 
         $Interpolation->interpolate(0.5, 0.14, [1, 2, 3]);
     }
 
-    public function testConstantClosure()
+    public function testConstantClosure(): void
     {
-        $Interpolation = new LambdaInterpolation(function ($x, $y, array $elevationOnBoundingBox) {
-            return 42;
-        });
+        $Interpolation = new LambdaInterpolation(fn ($x, $y, array $elevationOnBoundingBox): int => 42);
 
-        $this->assertEquals(42, $Interpolation->interpolate(0.314, 0.42, [100, 100, 100, 100]));
+        $this->assertSame(42, $Interpolation->interpolate(0.314, 0.42, [100, 100, 100, 100]));
     }
 }

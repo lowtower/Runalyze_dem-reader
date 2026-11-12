@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -14,52 +16,51 @@ namespace Runalyze\DEM\Tests\Provider\GeoTIFF;
 use Runalyze\DEM\Interpolation\BilinearInterpolation;
 use Runalyze\DEM\Provider\GeoTIFF\SRTM4Provider;
 
-class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
+final class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var string */
-    const PATH_TO_FILES = '/../../../../tests/testfiles';
+    public const string PATH_TO_FILES = '/../../../../tests/testfiles';
 
     /**
      * @var SRTM4Provider
      */
     protected $Provider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->Provider = new SRTM4Provider(__DIR__.self::PATH_TO_FILES);
+        $this->Provider = new SRTM4Provider(__DIR__ . self::PATH_TO_FILES);
         $this->Provider->setInterpolation(new BilinearInterpolation());
     }
 
-    protected function checkFile(string $filename)
+    protected function checkFile(string $filename): void
     {
-        if (!$this->fileIsThere($filename)) {
-            $this->markTestSkipped('Required testfile "'.$filename.'" is not available.');
+        if (! $this->fileIsThere($filename)) {
+            $this->markTestSkipped('Required testfile "' . $filename . '" is not available.');
         }
     }
 
     protected function fileIsThere(string $filename): bool
     {
-        return file_exists(__DIR__.self::PATH_TO_FILES.'/'.$filename);
+        return file_exists(__DIR__ . self::PATH_TO_FILES . '/' . $filename);
     }
 
-    public function testThatLocationOutOfBoundsIsRecognized()
+    public function testThatLocationOutOfBoundsIsRecognized(): void
     {
         $this->assertFalse($this->Provider->hasDataFor([
             [90.0, 0.1],
         ]));
     }
 
-    public function testThatThereIsNotDataForSomewhereOverTheRainbow()
+    public function testThatThereIsNotDataForSomewhereOverTheRainbow(): void
     {
         $this->assertFalse($this->Provider->hasDataFor([[18.979, -45.703]]));
     }
 
-    public function testInvalidLocation()
+    public function testInvalidLocation(): void
     {
         $this->assertFalse($this->Provider->getElevation(0.0, 0.0));
     }
 
-    public function testThatAvailableFileIsRecognized()
+    public function testThatAvailableFileIsRecognized(): void
     {
         $this->checkFile('srtm_38_03.tif');
 
@@ -69,7 +70,7 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
         ]));
     }
 
-    public function testThatFilenameFormatCanBeChanged()
+    public function testThatFilenameFormatCanBeChanged(): void
     {
         $this->checkFile('srtm_38_03.tif');
 
@@ -80,16 +81,16 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Provider->hasDataFor([[49.4, 7.7]]));
     }
 
-    public function testTileBoundary()
+    public function testTileBoundary(): void
     {
         $this->checkFile('srtm_38_03.tif');
 
         if (
-            !$this->fileIsThere('srtm_37_02.tif') &&
-            !$this->fileIsThere('srtm_37_03.tif') &&
-            !$this->fileIsThere('srtm_38_04.tif') &&
-            !$this->fileIsThere('srtm_39_03.tif') &&
-            !$this->fileIsThere('srtm_39_04.tif')
+            ! $this->fileIsThere('srtm_37_02.tif')
+            && ! $this->fileIsThere('srtm_37_03.tif')
+            && ! $this->fileIsThere('srtm_38_04.tif')
+            && ! $this->fileIsThere('srtm_39_03.tif')
+            && ! $this->fileIsThere('srtm_39_04.tif')
         ) {
             $this->assertTrue($this->Provider->hasDataFor([[50.00000, 5.00000]]));
             $this->assertFalse($this->Provider->hasDataFor([[50.00000, 4.99999]]));
@@ -98,25 +99,25 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
             $this->assertFalse($this->Provider->hasDataFor([[45.00000, 9.99999]]));
             $this->assertFalse($this->Provider->hasDataFor([[45.00001, 10.0000]]));
         } else {
-            $this->markTestSkipped('Can\'t check boundaries of tile as too many files are there.');
+            $this->markTestSkipped("Can't check boundaries of tile as too many files are there.");
         }
     }
 
-    public function testSingleElevationInGermany()
+    public function testSingleElevationInGermany(): void
     {
         $this->checkFile('srtm_38_03.tif');
 
         $this->assertEquals(239, $this->Provider->getElevation(49.444722, 7.768889));
     }
 
-    public function testThatUnknownElevationInSydneyIsGuessedBySurroundingValues()
+    public function testThatUnknownElevationInSydneyIsGuessedBySurroundingValues(): void
     {
         $this->checkFile('srtm_67_19.tif');
 
         $this->assertEquals(5, $this->Provider->getElevation(-33.8705667, 151.1486337));
     }
 
-    public function testMultipleElevationsInSydney()
+    public function testMultipleElevationsInSydney(): void
     {
         $this->checkFile('srtm_67_19.tif');
 
@@ -129,7 +130,7 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testLocationsInLondonLondon()
+    public function testLocationsInLondonLondon(): void
     {
         $this->checkFile('srtm_36_02.tif');
 
@@ -142,7 +143,7 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testLocationsInWindhoek()
+    public function testLocationsInWindhoek(): void
     {
         $this->checkFile('srtm_40_17.tif');
 
@@ -155,7 +156,7 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testNewYork()
+    public function testNewYork(): void
     {
         $this->checkFile('srtm_22_04.tif');
 
@@ -168,7 +169,7 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testNewYorkWithoutInterpolation()
+    public function testNewYorkWithoutInterpolation(): void
     {
         $this->checkFile('srtm_22_04.tif');
 
@@ -186,7 +187,7 @@ class SRTM4ProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @see https://github.com/Runalyze/dem-reader/issues/1
      */
-    public function testUnknownValuesSavedAs65535()
+    public function testUnknownValuesSavedAs65535(): void
     {
         $this->checkFile('srtm_38_02.tif');
 
