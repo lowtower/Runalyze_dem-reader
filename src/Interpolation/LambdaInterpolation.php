@@ -11,22 +11,23 @@
 
 namespace Runalyze\DEM\Interpolation;
 
+use Runalyze\DEM\Exception\InvalidArgumentException;
+
 class LambdaInterpolation implements InterpolationInterface
 {
     use ArgumentsCheckTrait;
 
-    /**
-     * @var \\Closure
-     */
+    /** @var \Closure */
     protected $Lambda;
 
     /**
+     * LambdaInterpolation constructor.
      * @param  \Closure $interpolationFunction
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function __construct($interpolationFunction)
     {
-        if (! $this->isValidClosure($interpolationFunction)) {
+        if (!$this->isValidClosure($interpolationFunction)) {
             throw new \Runalyze\DEM\Exception\InvalidArgumentException('Provided closure does not fulfill the requirements.');
         }
 
@@ -35,22 +36,24 @@ class LambdaInterpolation implements InterpolationInterface
 
     /**
      * @param  mixed $function
+     * @return bool
      */
     protected function isValidClosure($function): bool
     {
         $Reflection = new \ReflectionFunction($function);
 
-        return $Reflection->getNumberOfRequiredParameters() === 3;
+        return 3 === $Reflection->getNumberOfRequiredParameters();
     }
 
     /**
+     * Interpolate.
+     *
      * p0------------p1
      * |      |
      * |      y
      * |      |
      * |--x-- Z
-     * |
-     * p2------------p3
+     * |\n     * p2------------p3
      *
      * @param  float                    $x                      x position of Z within bounding box, required: $x in [0.0, 1.0]
      * @param  float                    $y                      y position of Z within bounding box, required: $y in [0.0, 1.0]
