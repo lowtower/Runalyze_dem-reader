@@ -15,7 +15,9 @@ use Runalyze\DEM\Exception\RuntimeException;
 
 abstract class AbstractResourceReader implements ResourceReaderInterface
 {
-    /** @var resource|false */
+    /**
+     * @var resource|false
+     */
     protected $FileResource = false;
 
     /**
@@ -23,7 +25,7 @@ abstract class AbstractResourceReader implements ResourceReaderInterface
      */
     public function __construct($resource = false)
     {
-        if (false !== $resource) {
+        if ($resource !== false) {
             $this->setResource($resource);
         }
     }
@@ -43,7 +45,7 @@ abstract class AbstractResourceReader implements ResourceReaderInterface
 
         $this->FileResource = $resource;
 
-        if (!is_resource($this->FileResource)) {
+        if (! is_resource($this->FileResource)) {
             throw new RuntimeException('Provided resource is invalid.');
         }
     }
@@ -58,15 +60,11 @@ abstract class AbstractResourceReader implements ResourceReaderInterface
     abstract public function readHeader(): void;
 
     /**
-     * @param  int      $row
-     * @param  int      $col
      * @return int|bool elevation [m] can be false if nothing retrieved or value is unknown
      */
     abstract public function getElevationFor(int $row, int $col): int|bool;
 
     /**
-     * @param  float   $relativeLatitude
-     * @param  float   $relativeLongitude
      * @return array{0:float,1:float} array(row, col)
      */
     abstract public function getExactRowAndColFor(float $relativeLatitude, float $relativeLongitude): array;

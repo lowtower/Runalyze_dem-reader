@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -16,12 +18,11 @@ use Runalyze\DEM\Provider\AbstractFileProvider;
 abstract class AbstractGeoTIFFProvider extends AbstractFileProvider
 {
     /**
-     * @param  string $filename
      * @throws \Runalyze\DEM\Exception\RuntimeException
      */
     protected function openResource(string $filename): void
     {
-        $resource = fopen($this->PathToFiles.DIRECTORY_SEPARATOR.$filename, 'rb');
+        $resource = fopen($this->PathToFiles . DIRECTORY_SEPARATOR . $filename, 'rb');
 
         $this->ResourceReader->setResource($resource);
         $this->ResourceReader->readHeader();
@@ -29,11 +30,6 @@ abstract class AbstractGeoTIFFProvider extends AbstractFileProvider
         $this->CurrentFilename = $filename;
     }
 
-    /**
-     * @param  int      $row
-     * @param  int      $col
-     * @return int|bool
-     */
     protected function getElevationFor(int $row, int $col): int|bool
     {
         return $this->ResourceReader->getElevationFor($row, $col);

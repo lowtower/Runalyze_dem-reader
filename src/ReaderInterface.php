@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -11,13 +13,10 @@
 
 namespace Runalyze\DEM;
 
-use Runalyze\DEM\Exception\InvalidArgumentException;
-
 interface ReaderInterface
 {
     /**
      * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
-     * @return bool
      */
     public function hasDataFor(array $latitudeLongitudes): bool;
 

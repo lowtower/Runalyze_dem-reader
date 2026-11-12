@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -16,9 +18,9 @@ use Runalyze\DEM\Reader;
 use Runalyze\DEM\Tests\Provider\Fixtures\ProviderForNothing;
 use Runalyze\DEM\Tests\Provider\Fixtures\ProviderReturningTheTruth;
 
-class ReaderTest extends \PHPUnit\Framework\TestCase
+final class ReaderTest extends \PHPUnit\Framework\TestCase
 {
-    public function testEmptyReader()
+    public function testEmptyReader(): void
     {
         $Reader = new Reader();
 
@@ -27,14 +29,14 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($Reader->hasDataFor([[42.0, 3.14]]));
     }
 
-    public function testThatReaderWithoutProviderThrowsExceptionInsteadOfInvalidElevations()
+    public function testThatReaderWithoutProviderThrowsExceptionInsteadOfInvalidElevations(): void
     {
         $this->expectException(RuntimeException::class);
 
         (new Reader())->getElevations([42.0, 42.2], [3.14, 3.14159]);
     }
 
-    public function testReaderWithNoProviderThatCanHandleTheLocations()
+    public function testReaderWithNoProviderThatCanHandleTheLocations(): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -42,7 +44,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $Reader->getElevations([42.0, 42.2], [3.14, 3.14159]);
     }
 
-    public function testThatOnlyWorkingProviderIsUsed()
+    public function testThatOnlyWorkingProviderIsUsed(): void
     {
         $Reader = new Reader();
         $Reader->addProvider(new ProviderForNothing());
@@ -52,7 +54,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([42, 42], $Reader->getElevations([1.0, 2.0], [3.0, 4.0]));
     }
 
-    public function testHandlingOfInvalidLocations()
+    public function testHandlingOfInvalidLocations(): void
     {
         $Reader = new Reader(new ProviderReturningTheTruth());
 

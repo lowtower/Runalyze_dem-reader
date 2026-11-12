@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -13,25 +15,26 @@ namespace Runalyze\DEM\Tests\Interpolation;
 
 use Runalyze\DEM\Exception\InvalidArgumentException;
 
-class ArgumentsCheckTraitTest extends \PHPUnit\Framework\TestCase
+final class ArgumentsCheckTraitTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \ReflectionMethod */
+    /**
+     * @var \ReflectionMethod
+     */
     protected $CheckArgumentsMethod;
 
-    /** @var object */
+    /**
+     * @var object
+     */
     protected $Object;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->Object = $this->getObjectForTrait('\\Runalyze\\DEM\\Interpolation\\ArgumentsCheckTrait');
+        $this->Object = $this->getObjectForTrait(\Runalyze\DEM\Interpolation\ArgumentsCheckTrait::class);
         $this->CheckArgumentsMethod = new \ReflectionMethod($this->Object, 'checkArguments');
-        $this->CheckArgumentsMethod->setAccessible(true);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testValidCheckArgumentsCalls()
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    public function testValidCheckArgumentsCalls(): void
     {
         $this->CheckArgumentsMethod->invoke($this->Object, 0.0, 0.0, [42, 42, 42, 42]);
         $this->CheckArgumentsMethod->invoke($this->Object, 0.0, 1.0, [42, 42, 42, 42]);
@@ -40,49 +43,49 @@ class ArgumentsCheckTraitTest extends \PHPUnit\Framework\TestCase
         $this->CheckArgumentsMethod->invoke($this->Object, 0.5, 0.3, [42, 42, 42, 42]);
     }
 
-    public function testEmptyBoundingBox()
+    public function testEmptyBoundingBox(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->CheckArgumentsMethod->invoke($this->Object, 0.5, 0.5, []);
     }
 
-    public function testBoundingBoxWithOnlyThreeElements()
+    public function testBoundingBoxWithOnlyThreeElements(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->CheckArgumentsMethod->invoke($this->Object, 0.5, 0.5, [1, 2, 3]);
     }
 
-    public function testBoundingBoxWithTooManyElements()
+    public function testBoundingBoxWithTooManyElements(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->CheckArgumentsMethod->invoke($this->Object, 0.5, 0.5, [1, 2, 3, 4, 5]);
     }
 
-    public function testXNegative()
+    public function testXNegative(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->CheckArgumentsMethod->invoke($this->Object, -0.1, 0.5, [1, 2, 3, 4]);
     }
 
-    public function testXLargerThanOne()
+    public function testXLargerThanOne(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->CheckArgumentsMethod->invoke($this->Object, 1.1, 0.5, [1, 2, 3, 4]);
     }
 
-    public function testYNegative()
+    public function testYNegative(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->CheckArgumentsMethod->invoke($this->Object, 0.1, -1.0, [1, 2, 3, 4]);
     }
 
-    public function testYLargerThanOne()
+    public function testYLargerThanOne(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

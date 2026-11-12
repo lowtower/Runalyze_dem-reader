@@ -18,34 +18,34 @@ abstract class AbstractFileProvider implements ProviderInterface
 {
     use GuessInvalidValuesTrait;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected const MAX_LATITUDE = 90;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected const MAX_LONGITUDE = 180;
 
-    /** @var string */
-    protected string $PathToFiles;
-
-    /** @var resource|false */
+    /**
+     * @var resource|false
+     */
     protected $FileResource = false;
 
-    /** @var string|false */
+    /**
+     * @var string|false
+     */
     protected $CurrentFilename = false;
 
-    /** @var InterpolationInterface|null */
     protected ?InterpolationInterface $Interpolation = null;
 
-    /** @var ResourceReaderInterface */
     protected ResourceReaderInterface $ResourceReader;
 
-    /**
-     * @param string                       $pathToFiles
-     * @param InterpolationInterface|null  $interpolation
-     */
-    public function __construct(string $pathToFiles, ?InterpolationInterface $interpolation = null)
-    {
-        $this->PathToFiles = $pathToFiles;
+    public function __construct(
+        protected string $PathToFiles,
+        ?InterpolationInterface $interpolation = null
+    ) {
         $this->Interpolation = $interpolation;
 
         $this->addSlashToPathIfNotThere();
@@ -54,14 +54,11 @@ abstract class AbstractFileProvider implements ProviderInterface
 
     private function addSlashToPathIfNotThere(): void
     {
-        if (!str_ends_with($this->PathToFiles, '/')) {
+        if (! str_ends_with($this->PathToFiles, '/')) {
             $this->PathToFiles .= '/';
         }
     }
 
-    /**
-     * @param InterpolationInterface $interpolation
-     */
     public function setInterpolation(InterpolationInterface $interpolation): void
     {
         $this->Interpolation = $interpolation;
@@ -74,7 +71,6 @@ abstract class AbstractFileProvider implements ProviderInterface
 
     /**
      * @param  array<array> $latitudeLongitudes array(array($lat, $lng), ...)
-     * @return bool
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function hasDataFor(array $latitudeLongitudes): bool
@@ -84,11 +80,11 @@ abstract class AbstractFileProvider implements ProviderInterface
                 throw new InvalidArgumentException('Locations must be arrays of two values.');
             }
 
-            if (!$this->locationIsInBounds($location[0], $location[1])) {
+            if (! $this->locationIsInBounds($location[0], $location[1])) {
                 return false;
             }
 
-            if (!file_exists($this->PathToFiles.$this->getFilenameFor($location[0], $location[1]))) {
+            if (! file_exists($this->PathToFiles . $this->getFilenameFor($location[0], $location[1]))) {
                 return false;
             }
         }
@@ -96,25 +92,17 @@ abstract class AbstractFileProvider implements ProviderInterface
         return true;
     }
 
-    /**
-     * @param  float $latitude
-     * @param  float $longitude
-     * @return bool
-     */
     protected function locationIsInBounds(float $latitude, float $longitude): bool
     {
         return
-            ($latitude > -static::MAX_LATITUDE) && ($latitude <= static::MAX_LATITUDE) &&
-            ($longitude > -static::MAX_LONGITUDE) && ($longitude < static::MAX_LONGITUDE)
+            ($latitude > -static::MAX_LATITUDE) && ($latitude <= static::MAX_LATITUDE)
+            && ($longitude > -static::MAX_LONGITUDE) && ($longitude < static::MAX_LONGITUDE)
         ;
     }
 
-    /**
-     * @return bool
-     */
     public function usesInterpolation(): bool
     {
-        return null !== $this->Interpolation;
+        return $this->Interpolation instanceof \Runalyze\DEM\Interpolation\InterpolationInterface;
     }
 
     /**
@@ -156,12 +144,16 @@ abstract class AbstractFileProvider implements ProviderInterface
             return false;
         }
 
-        if (!$this->locationIsInBounds($latitude, $longitude)) {
+        if (! $this->locationIsInBounds($latitude, $longitude)) {
             throw new InvalidArgumentException(
-                sprintf('Location (%f, %f) is out of bounds ([-%f, %f], [-%f, %f]).',
-                    $latitude, $longitude,
-                    static::MAX_LATITUDE, static::MAX_LATITUDE,
-                    static::MAX_LONGITUDE, static::MAX_LONGITUDE
+                sprintf(
+                    'Location (%f, %f) is out of bounds ([-%f, %f], [-%f, %f]).',
+                    $latitude,
+                    $longitude,
+                    static::MAX_LATITUDE,
+                    static::MAX_LATITUDE,
+                    static::MAX_LONGITUDE,
+                    static::MAX_LONGITUDE
                 )
             );
         }
@@ -176,15 +168,13 @@ abstract class AbstractFileProvider implements ProviderInterface
     }
 
     /**
-     * @param  float    $latitude
-     * @param  float    $longitude
      * @return int|bool can be false if nothing retrieved
      */
     protected function getElevationFromResource(float $latitude, float $longitude): int|bool
     {
         [$exactRowValue, $exactColValue] = $this->getExactRowAndColFor($latitude, $longitude);
 
-        if (!$this->usesInterpolation()) {
+        if (! $this->usesInterpolation()) {
             return $this->getElevationFor((int) round($exactRowValue), (int) round($exactColValue));
         }
 
@@ -192,8 +182,6 @@ abstract class AbstractFileProvider implements ProviderInterface
     }
 
     /**
-     * @param  float    $exactRowValue
-     * @param  float    $exactColValue
      * @return int|bool can be false if nothing retrieved
      */
     protected function getInterpolatedElevationFor(float $exactRowValue, float $exactColValue): int|bool
@@ -210,7 +198,7 @@ abstract class AbstractFileProvider implements ProviderInterface
 
         $this->guessInvalidValuesOnBox($elevationOnBoundingBox);
 
-        if (null === $this->Interpolation) {
+        if (! $this->Interpolation instanceof \Runalyze\DEM\Interpolation\InterpolationInterface) {
             throw new \Runalyze\DEM\Exception\RuntimeException('Interpolation is not set.');
         }
 
@@ -221,30 +209,18 @@ abstract class AbstractFileProvider implements ProviderInterface
         );
     }
 
-    /**
-     * @param  float  $latitude
-     * @param  float  $longitude
-     * @return string
-     */
     abstract protected function getFilenameFor(float $latitude, float $longitude): string;
 
     abstract protected function initResourceReader(): void;
 
-    /**
-     * @param string $filename
-     */
     abstract protected function openResource(string $filename): void;
 
     /**
-     * @param  int      $row
-     * @param  int      $col
      * @return int|bool elevation [m] can be false if nothing retrieved
      */
     abstract protected function getElevationFor(int $row, int $col): int|bool;
 
     /**
-     * @param  float $latitude
-     * @param  float $longitude
      * @return array{0:float,1:float} array(row, col)
      */
     abstract protected function getExactRowAndColFor(float $latitude, float $longitude): array;

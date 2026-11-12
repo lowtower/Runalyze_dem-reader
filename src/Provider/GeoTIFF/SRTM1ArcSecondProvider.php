@@ -11,20 +11,16 @@
 
 namespace Runalyze\DEM\Provider\GeoTIFF;
 
-use Runalyze\DEM\Exception\InvalidArgumentException;
-
 class SRTM1ArcSecondProvider extends SRTM4Provider
 {
-    /** @var float */
+    /**
+     * @var float
+     */
     protected const DEGREES_PER_TILE = 1.0;
 
-    /** @var string */
     protected string $FilenameFormat = '%s%02d_%s%03d.tif';
 
     /**
-     * @param  float                    $latitude
-     * @param  float                    $longitude
-     * @return string
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     protected function getFilenameFor(float $latitude, float $longitude): string
@@ -40,29 +36,23 @@ class SRTM1ArcSecondProvider extends SRTM4Provider
         );
     }
 
-    /**
-     * @param float $latitude
-     * @param float $longitude
-     */
     protected function loadTileReferencesFor(float $latitude, float $longitude): void
     {
-        $this->CurrentTileVerticalReference = (float) floor($latitude / static::DEGREES_PER_TILE);
-        $this->CurrentTileHorizontalReference = (float) floor($longitude / static::DEGREES_PER_TILE);
+        $this->CurrentTileVerticalReference = floor($latitude / self::DEGREES_PER_TILE);
+        $this->CurrentTileHorizontalReference = floor($longitude / self::DEGREES_PER_TILE);
 
         $this->CurrentTileLatitude = $this->CurrentTileVerticalReference;
         $this->CurrentTileLongitude = $this->CurrentTileHorizontalReference;
     }
 
     /**
-     * @param  float   $latitude
-     * @param  float   $longitude
      * @return array{0:float,1:float} array(row, col)
      */
     protected function getExactRowAndColFor(float $latitude, float $longitude): array
     {
         return $this->ResourceReader->getExactRowAndColFor(
-            abs($this->CurrentTileLatitude + 1 - $latitude) / static::DEGREES_PER_TILE,
-            abs($longitude - $this->CurrentTileLongitude) / static::DEGREES_PER_TILE
+            abs($this->CurrentTileLatitude + 1 - $latitude) / self::DEGREES_PER_TILE,
+            abs($longitude - $this->CurrentTileLongitude) / self::DEGREES_PER_TILE
         );
     }
 }

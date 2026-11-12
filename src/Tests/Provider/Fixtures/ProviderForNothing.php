@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -18,26 +20,20 @@ class ProviderForNothing implements ProviderInterface
 {
     /**
      * @param  array $latitudeLongitudes array(array($lat, $lng), ...)
-     * @return bool
      */
-    public function hasDataFor(array $latitudeLongitudes)
+    public function hasDataFor(array $latitudeLongitudes): bool
     {
         return false;
     }
 
-    /**
-     * @param InterpolationInterface $interpolation
-     */
-    public function setInterpolation(InterpolationInterface $interpolation)
-    {
-    }
+    public function setInterpolation(InterpolationInterface $interpolation): void {}
 
     /**
      * @param  float    $latitude
      * @param  float    $longitude
      * @return int|bool elevation [m] can be false if nothing retrieved
      */
-    public function getElevation($latitude, $longitude)
+    public function getElevation($latitude, $longitude): int|bool
     {
         return false;
     }
@@ -47,7 +43,7 @@ class ProviderForNothing implements ProviderInterface
      * @param  float[] $longitudes
      * @return array   elevations [m] can be false if nothing retrieved
      */
-    public function getElevations(array $latitudes, array $longitudes)
+    public function getElevations(array $latitudes, array $longitudes): array
     {
         return array_fill(0, count($latitudes), false);
     }

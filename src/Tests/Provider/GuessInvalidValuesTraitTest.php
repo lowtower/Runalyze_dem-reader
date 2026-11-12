@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -11,39 +13,42 @@
 
 namespace Runalyze\DEM\Tests\Provider;
 
-class GuessInvalidValuesTraitTest extends \PHPUnit\Framework\TestCase
+final class GuessInvalidValuesTraitTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \ReflectionMethod */
+    /**
+     * @var \ReflectionMethod
+     */
     protected $GuessInvalidValuesOnBoxMethod;
 
-    /** @var object */
+    /**
+     * @var object
+     */
     protected $Object;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->Object = $this->getObjectForTrait('\\Runalyze\\DEM\\Provider\\GuessInvalidValuesTrait');
+        $this->Object = $this->getObjectForTrait(\Runalyze\DEM\Provider\GuessInvalidValuesTrait::class);
         $this->GuessInvalidValuesOnBoxMethod = new \ReflectionMethod($this->Object, 'guessInvalidValuesOnBox');
-        $this->GuessInvalidValuesOnBoxMethod->setAccessible(true);
     }
 
-    public function testEmptyBoundingBox()
+    public function testEmptyBoundingBox(): void
     {
         $box = [false, false, false, false];
         $this->GuessInvalidValuesOnBoxMethod->invokeArgs($this->Object, [&$box]);
         $this->assertEquals([false, false, false, false], $box);
     }
 
-    public function testBoundingBoxWithAllValidEntries()
+    public function testBoundingBoxWithAllValidEntries(): void
     {
         $box = [42, 42, 42, 42];
         $this->GuessInvalidValuesOnBoxMethod->invokeArgs($this->Object, [&$box]);
-        $this->assertEquals([42, 42, 42, 42], $box);
+        $this->assertSame([42, 42, 42, 42], $box);
     }
 
-    public function testBoundingBoxWithInvalidEntries()
+    public function testBoundingBoxWithInvalidEntries(): void
     {
         $box = [3, false, 42, false];
         $this->GuessInvalidValuesOnBoxMethod->invokeArgs($this->Object, [&$box]);
-        $this->assertEquals([3, 22.5, 42, 22.5], $box);
+        $this->assertSame([3, 22.5, 42, 22.5], $box);
     }
 }

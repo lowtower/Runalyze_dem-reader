@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -16,8 +18,6 @@ class BilinearInterpolation implements InterpolationInterface
     use ArgumentsCheckTrait;
 
     /**
-     * Interpolate.
-     *
      * p0------------p1
      * |      |
      * |      y

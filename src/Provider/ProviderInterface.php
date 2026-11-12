@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -16,9 +18,6 @@ use Runalyze\DEM\ReaderInterface;
 
 interface ProviderInterface extends ReaderInterface
 {
-    /**
-     * @param InterpolationInterface $interpolation
-     */
     public function setInterpolation(InterpolationInterface $interpolation): void;
 
     /**

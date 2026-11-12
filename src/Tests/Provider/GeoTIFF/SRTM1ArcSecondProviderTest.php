@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -14,44 +16,46 @@ namespace Runalyze\DEM\Tests\Provider\GeoTIFF;
 use Runalyze\DEM\Interpolation\BilinearInterpolation;
 use Runalyze\DEM\Provider\GeoTIFF\SRTM1ArcSecondProvider;
 
-class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
+final class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var string */
-    const PATH_TO_FILES = '/../../../../tests/testfiles';
+    /**
+     * @var string
+     */
+    public const PATH_TO_FILES = '/../../../../tests/testfiles';
 
     /**
      * @var SRTM1ArcSecondProvider
      */
     protected $Provider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->Provider = new SRTM1ArcSecondProvider(__DIR__.self::PATH_TO_FILES);
+        $this->Provider = new SRTM1ArcSecondProvider(__DIR__ . self::PATH_TO_FILES);
         $this->Provider->setFilenameFormat('%s%02d_%s%03d_1arc_v3.tif');
         $this->Provider->setInterpolation(new BilinearInterpolation());
     }
 
-    protected function checkFile(string $filename)
+    protected function checkFile(string $filename): void
     {
-        if (!$this->fileIsThere($filename)) {
-            $this->markTestSkipped('Required testfile "'.$filename.'" is not available.');
+        if (! $this->fileIsThere($filename)) {
+            $this->markTestSkipped('Required testfile "' . $filename . '" is not available.');
         }
     }
 
     protected function fileIsThere(string $filename): bool
     {
-        return file_exists(__DIR__.self::PATH_TO_FILES.'/'.$filename);
+        return file_exists(__DIR__ . self::PATH_TO_FILES . '/' . $filename);
     }
 
-    public function testTileBoundary()
+    public function testTileBoundary(): void
     {
         $this->checkFile('n49_e007_1arc_v3.tif');
 
         if (
-            !$this->fileIsThere('n49_e006_1arc_v3.tif') &&
-            !$this->fileIsThere('n49_e008_1arc_v3.tif') &&
-            !$this->fileIsThere('n48_e007_1arc_v3.tif') &&
-            !$this->fileIsThere('n50_e007_1arc_v3.tif')
+            ! $this->fileIsThere('n49_e006_1arc_v3.tif')
+            && ! $this->fileIsThere('n49_e008_1arc_v3.tif')
+            && ! $this->fileIsThere('n48_e007_1arc_v3.tif')
+            && ! $this->fileIsThere('n50_e007_1arc_v3.tif')
         ) {
             $this->assertTrue($this->Provider->hasDataFor([[49.00000, 7.00000]]));
             $this->assertTrue($this->Provider->hasDataFor([[49.99999, 7.00000]]));
@@ -62,14 +66,11 @@ class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
             $this->assertFalse($this->Provider->hasDataFor([[49.00000, 8.00000]]));
             $this->assertFalse($this->Provider->hasDataFor([[48.99999, 7.99999]]));
         } else {
-            $this->markTestSkipped('Can\'t check boundaries of tile as too many files are there.');
+            $this->markTestSkipped("Can't check boundaries of tile as too many files are there.");
         }
     }
 
-    /**
-     * @group germany
-     */
-    public function testSingleElevationInGermany()
+    public function testSingleElevationInGermany(): void
     {
         $this->checkFile('n49_e007_1arc_v3.tif');
 
@@ -77,7 +78,7 @@ class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(239, $this->Provider->getElevation(49.444722, 7.768889));
     }
 
-    public function testMultipleElevationsInSydney()
+    public function testMultipleElevationsInSydney(): void
     {
         $this->checkFile('s34_e151_1arc_v3.tif');
 
@@ -91,10 +92,7 @@ class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @group london
-     */
-    public function testLocationsInLondon()
+    public function testLocationsInLondon(): void
     {
         $this->checkFile('n51_w001_1arc_v3.tif');
 
@@ -108,7 +106,7 @@ class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testLocationsInWindhoek()
+    public function testLocationsInWindhoek(): void
     {
         $this->checkFile('s23_e017_1arc_v3.tif');
 
@@ -122,7 +120,7 @@ class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testNewYork()
+    public function testNewYork(): void
     {
         $this->checkFile('n40_w075_1arc_v3.tif');
 
@@ -136,7 +134,7 @@ class SRTM1ArcSecondProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testNewYorkWithoutInterpolation()
+    public function testNewYorkWithoutInterpolation(): void
     {
         $this->checkFile('n40_w075_1arc_v3.tif');
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Runalyze DEM Reader.
  *
@@ -21,15 +23,11 @@ interface ResourceReaderInterface
     public function readHeader(): void;
 
     /**
-     * @param  int      $row
-     * @param  int      $col
      * @return int|bool elevation [m] can be false if nothing retrieved or value is unknown
      */
     public function getElevationFor(int $row, int $col): int|bool;
 
     /**
-     * @param  float   $relativeLatitude
-     * @param  float   $relativeLongitude
      * @return array{0:float,1:float} array(row, col)
      */
     public function getExactRowAndColFor(float $relativeLatitude, float $relativeLongitude): array;

@@ -16,49 +16,37 @@ use Runalyze\DEM\Provider\ProviderInterface;
 
 class Reader implements ReaderInterface
 {
-    /** @var ProviderInterface[] */
+    /**
+     * @var ProviderInterface[]
+     */
     protected array $Provider = [];
 
-    /** @var bool */
     protected bool $InvalidFlag = false;
 
-    /**
-     * @param ProviderInterface|null $provider
-     */
     public function __construct(?ProviderInterface $provider = null)
     {
-        if (null !== $provider) {
+        if ($provider instanceof \Runalyze\DEM\Provider\ProviderInterface) {
             $this->addProvider($provider);
         }
     }
 
-    /**
-     * @param ProviderInterface $provider
-     */
     public function addProvider(ProviderInterface $provider): void
     {
         $this->Provider[] = $provider;
     }
 
-    /**
-     * @return int
-     */
     public function numberOfProviders(): int
     {
         return count($this->Provider);
     }
 
-    /**
-     * @return bool
-     */
     public function hasProviders(): bool
     {
-        return !empty($this->Provider);
+        return $this->Provider !== [];
     }
 
     /**
      * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
-     * @return bool
      * @throws \Runalyze\DEM\Exception\RuntimeException
      */
     public function hasDataFor(array $latitudeLongitudes): bool
@@ -101,7 +89,7 @@ class Reader implements ReaderInterface
         $filteredLatitudes = array_filter($latitudes);
         $filteredLongitudes = array_filter($longitudes);
 
-        if (empty($filteredLatitudes) || empty($filteredLongitudes)) {
+        if ($filteredLatitudes === [] || $filteredLongitudes === []) {
             return [];
         }
 
