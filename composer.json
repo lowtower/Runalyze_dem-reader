@@ -9,10 +9,11 @@
     "phpunit/phpunit": " ^10.0 ",
     "friendsofphp/php-cs-fixer": "^3.95",
     "phpstan/phpstan": "^2.0",
-    "rector/rector": "^2.0",
+    "rector/rector": "^2.8",
     "nette/utils": "^4.1",
     "phpunit/php-code-coverage": " ^10.0 ",
-    "phpunit/php-invoker": "^3.1 || ^4.0"
+    "phpunit/php-invoker": "^3.1 || ^4.0",
+        "symplify/easy-coding-standard": "^13.3"
   },
   "config": {
     "platform-check": false,
@@ -24,10 +25,28 @@
     }
   },
   "scripts": {
-    "test": "phpunit",
-    "test-coverage": "phpunit --coverage-clover=coverage.clover --coverage-xml=coverage.xml --coverage-html=coverage-html",
+    "lint": "vendor/bin/ecs check --ansi",
+    "lint:fix": "vendor/bin/ecs check --fix --ansi",
+    "rector": "rector process src --dry-run",
+    "rector:fix": "rector process src",
+    "php-cs": "php-cs-fixer check",
+    "php-cs:fix": "php-cs-fixer fix",
     "analyse": "phpstan analyse src --level=5",
-    "fix": "php-cs-fixer fix",
-    "rector": "rector process src --dry-run"
+    "qa": [
+      "@rector",
+      "@php-cs",
+      "@lint",
+      "@analyse"
+    ],
+    "fix": [
+      "@rector:fix",
+      "@php-cs:fix",
+      "@lint:fix"
+    ],
+    "test": "phpunit",
+    "test-coverage": "phpunit --coverage-clover=coverage.clover --coverage-xml=coverage.xml --coverage-html=coverage-html"
+  },
+  "config": {
+    "sort-packages": true
   }
 }

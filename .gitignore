@@ -1,5 +1,6 @@
 vendor/
 tests/testfiles/*
+.php-cs-fixer.cache
 
 # Coverage files
 coverage.clover
