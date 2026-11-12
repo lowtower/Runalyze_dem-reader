@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache">
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    resolveDependencies="true"
+    colors="true"
+    failOnNotice="true"
+    failOnWarning="true"
+    bootstrap="vendor/autoload.php"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
+    beStrictAboutTestsThatDoNotTestAnything="false"
+    cacheDirectory=".phpunit.cache"
+>
+    <php>
+        <ini name="display_errors" value="1" />
+        <ini name="error_reporting" value="-1" />
+        <ini name="xdebug.mode" value="coverage"/>
+    </php>
     <testsuites>
         <testsuite name="DEM-Reader Tests">
             <directory suffix="Test.php">./src/Tests/</directory>
         </testsuite>
     </testsuites>
-    <php>
-        <ini name="xdebug.mode" value="coverage"/>
-    </php>
 </phpunit>
