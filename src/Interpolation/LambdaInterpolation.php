@@ -34,7 +34,7 @@ class LambdaInterpolation implements InterpolationInterface
     }
 
     /**
-     * @param  mixed $function
+     * @param  \Closure|string $function
      */
     protected function isValidClosure($function): bool
     {
@@ -61,6 +61,8 @@ class LambdaInterpolation implements InterpolationInterface
     {
         $this->checkArguments($x, $y, $elevationOnBoundingBox);
 
-        return $this->Lambda->__invoke($x, $y, $elevationOnBoundingBox);
+        $result = $this->Lambda->__invoke($x, $y, $elevationOnBoundingBox);
+
+        return (int) $result;
     }
 }
