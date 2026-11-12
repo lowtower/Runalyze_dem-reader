@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache" executionOrder="depends,defects" requireCoverageMetadata="false">
+<phpunit bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="DEM-Reader Tests">
             <directory suffix="Test.php">./src/Tests/</directory>

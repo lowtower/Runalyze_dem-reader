@@ -80,11 +80,11 @@ abstract class AbstractFileProvider implements ProviderInterface
                 throw new InvalidArgumentException('Locations must be arrays of two values.');
             }
 
-            if (! $this->locationIsInBounds((float) $location[0], (float) $location[1])) {
+            if (! $this->locationIsInBounds($location[0], $location[1])) {
                 return false;
             }
 
-            if (! file_exists($this->PathToFiles . $this->getFilenameFor((float) $location[0], (float) $location[1]))) {
+            if (! file_exists($this->PathToFiles . $this->getFilenameFor($location[0], $location[1]))) {
                 return false;
             }
         }
