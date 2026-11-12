@@ -1,18 +1,16 @@
 includes:
-	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
 
 parameters:
-	level: 8
-	paths:
-		- src
-		- tests
-	excludePaths:
-		analyse:
-			- src/Tests/*
-			- tests/*
+    level: 8
+    paths:
+        - src
+        - tests
+    excludePaths:
+        analyse:
+            - src/Tests/*
+            - tests/*
 
-	inferPrivatePropertyTypeFromConstructor: true
-	treatPhpDocTypesAsCertain: false
-	ignoreErrors:
-		-
-			identifier: missingType.iterableValue
+    inferPrivatePropertyTypeFromConstructor: true
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors: []
