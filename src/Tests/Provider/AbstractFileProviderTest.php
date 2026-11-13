@@ -18,9 +18,6 @@ use Runalyze\DEM\Provider\AbstractFileProvider;
 
 final class AbstractFileProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var AbstractFileProvider
-     */
     protected \PHPUnit\Framework\MockObject\MockObject $Object;
 
     protected function setUp(): void
@@ -44,6 +41,8 @@ final class AbstractFileProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testThatTheProviderHasNoDataAsThereAreNoFiles(): void
     {
+        $this->Object->method('getFilenameFor')->willReturn('does-not-exist.tif');
+
         $this->assertFalse($this->Object->hasDataFor([[49.4, 7.7]]));
     }
 

@@ -11,12 +11,14 @@
 
 namespace Runalyze\DEM\Interpolation;
 
+use Runalyze\DEM\Exception\InvalidArgumentException;
+
 class LambdaInterpolation implements InterpolationInterface
 {
     use ArgumentsCheckTrait;
 
     /**
-     * @var \Closure(float, float, array): int
+     * @var \Closure(float, float, array<int|bool|float>): int
      */
     protected $Lambda;
 
@@ -24,19 +26,19 @@ class LambdaInterpolation implements InterpolationInterface
      * @param  \Closure $interpolationFunction
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    public function __construct($interpolationFunction)
+    public function __construct(\Closure $interpolationFunction)
     {
         if (! $this->isValidClosure($interpolationFunction)) {
-            throw new \Runalyze\DEM\Exception\InvalidArgumentException('Provided closure does not fulfill the requirements.');
+            throw new InvalidArgumentException('Provided closure does not fulfill the requirements.');
         }
 
         $this->Lambda = $interpolationFunction;
     }
 
     /**
-     * @param  \Closure|string $function
+     * @param  \Closure $function
      */
-    protected function isValidClosure($function): bool
+    protected function isValidClosure(\Closure $function): bool
     {
         $Reflection = new \ReflectionFunction($function);
 
@@ -49,11 +51,12 @@ class LambdaInterpolation implements InterpolationInterface
      * |      y
      * |      |
      * |--x-- Z
-     * |\n     * p2------------p3
+     * |
+     * p2------------p3
      *
      * @param  float                    $x                      x position of Z within bounding box, required: $x in [0.0, 1.0]
      * @param  float                    $y                      y position of Z within bounding box, required: $y in [0.0, 1.0]
-     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param  array<int|bool|float>    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @return int                      estimated elevation on point Z
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
@@ -61,6 +64,6 @@ class LambdaInterpolation implements InterpolationInterface
     {
         $this->checkArguments($x, $y, $elevationOnBoundingBox);
 
-        return $this->Lambda->__invoke($x, $y, $elevationOnBoundingBox);
+        return ($this->Lambda)($x, $y, $elevationOnBoundingBox);
     }
 }

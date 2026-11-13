@@ -27,7 +27,9 @@ final class GuessInvalidValuesTraitTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Object = $this->getObjectForTrait(\Runalyze\DEM\Provider\GuessInvalidValuesTrait::class);
+        $this->Object = new class {
+            use \Runalyze\DEM\Provider\GuessInvalidValuesTrait;
+        };
         $this->GuessInvalidValuesOnBoxMethod = new \ReflectionMethod($this->Object, 'guessInvalidValuesOnBox');
     }
 

@@ -29,7 +29,9 @@ final class ArgumentsCheckTraitTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Object = $this->getObjectForTrait(\Runalyze\DEM\Interpolation\ArgumentsCheckTrait::class);
+        $this->Object = new class {
+            use \Runalyze\DEM\Interpolation\ArgumentsCheckTrait;
+        };
         $this->CheckArgumentsMethod = new \ReflectionMethod($this->Object, 'checkArguments');
     }
 

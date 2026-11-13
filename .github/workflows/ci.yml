@@ -127,7 +127,7 @@ jobs:
 
       - name: Display coverage percentage
         run: |
-          COVERAGE=$(grep -oP '\d+(\.\d+)?%' coverage.xml | head -1 | tr -d '%')
+          COVERAGE=$(php -r '$m = simplexml_load_file("coverage.clover")->project->metrics; echo round(100 * (int) $m["coveredstatements"] / max(1, (int) $m["statements"]), 2);')
           echo "Code Coverage: ${COVERAGE}%"
           echo "coverage=${COVERAGE}" >> $GITHUB_OUTPUT
         id: coverage

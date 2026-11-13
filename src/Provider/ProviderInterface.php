@@ -25,5 +25,5 @@ interface ProviderInterface extends ReaderInterface
      * @param  float    $longitude
      * @return int|bool elevation [m] can be false if nothing retrieved
      */
-    public function getElevation($latitude, $longitude): int|bool;
+    public function getElevation(float $latitude, float $longitude): int|bool;
 }

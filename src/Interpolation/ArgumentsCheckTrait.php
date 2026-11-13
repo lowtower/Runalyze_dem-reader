@@ -18,7 +18,7 @@ use Runalyze\DEM\Exception\InvalidArgumentException;
 trait ArgumentsCheckTrait
 {
     /**
-     * @param  array<int|bool>          $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
+     * @param  array<int|bool|float>    $elevationOnBoundingBox elevation data on [p0, p1, p2, p3]
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     protected function checkArguments(float $x, float $y, array $elevationOnBoundingBox): void

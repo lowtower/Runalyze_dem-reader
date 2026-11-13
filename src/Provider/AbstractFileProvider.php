@@ -12,6 +12,7 @@
 namespace Runalyze\DEM\Provider;
 
 use Runalyze\DEM\Exception\InvalidArgumentException;
+use Runalyze\DEM\Exception\RuntimeException;
 use Runalyze\DEM\Interpolation\InterpolationInterface;
 
 abstract class AbstractFileProvider implements ProviderInterface
@@ -70,7 +71,7 @@ abstract class AbstractFileProvider implements ProviderInterface
     }
 
     /**
-     * @param  array<array> $latitudeLongitudes array(array($lat, $lng), ...)
+     * @param  array<array{0:float,1:float}> $latitudeLongitudes array(array($lat, $lng), ...)
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
     public function hasDataFor(array $latitudeLongitudes): bool
@@ -102,7 +103,7 @@ abstract class AbstractFileProvider implements ProviderInterface
 
     public function usesInterpolation(): bool
     {
-        return $this->Interpolation instanceof \Runalyze\DEM\Interpolation\InterpolationInterface;
+        return $this->Interpolation instanceof InterpolationInterface;
     }
 
     /**
@@ -138,7 +139,7 @@ abstract class AbstractFileProvider implements ProviderInterface
      * @return int|bool                  elevation [m] can be false if nothing retrieved
      * @throws \Runalyze\DEM\Exception\InvalidArgumentException
      */
-    public function getElevation($latitude, $longitude): int|bool
+    public function getElevation(float $latitude, float $longitude): int|bool
     {
         if ($latitude === 0.0 && $longitude === 0.0) {
             return false;
@@ -199,7 +200,7 @@ abstract class AbstractFileProvider implements ProviderInterface
         $this->guessInvalidValuesOnBox($elevationOnBoundingBox);
 
         if (! $this->Interpolation instanceof \Runalyze\DEM\Interpolation\InterpolationInterface) {
-            throw new \Runalyze\DEM\Exception\RuntimeException('Interpolation is not set.');
+            throw new RuntimeException('Interpolation is not set.');
         }
 
         return $this->Interpolation->interpolate(

@@ -5,11 +5,9 @@ parameters:
     level: 8
     paths:
         - src
-        - tests
     excludePaths:
         analyse:
             - src/Tests/*
-            - tests/*
 
     inferPrivatePropertyTypeFromConstructor: true
     treatPhpDocTypesAsCertain: false

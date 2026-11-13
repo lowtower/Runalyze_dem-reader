@@ -25,7 +25,7 @@ class Reader implements ReaderInterface
 
     public function __construct(?ProviderInterface $provider = null)
     {
-        if ($provider instanceof \Runalyze\DEM\Provider\ProviderInterface) {
+        if ($provider !== null) {
             $this->addProvider($provider);
         }
     }
